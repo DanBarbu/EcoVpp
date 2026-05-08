@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-webhook
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.webhookReceiver.service.type }}
+  selector:
+    app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+    component: webhook
+  ports:
+    - port: {{ .Values.webhookReceiver.service.port }}
+      targetPort: 8000
+      name: http

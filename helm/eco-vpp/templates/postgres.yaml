@@ -1,0 +1,64 @@
+{{- if .Values.postgres.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-postgres-data
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: {{ .Values.postgres.storage }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-postgres
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "eco-vpp.fullname" . }}-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+      component: postgres
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        component: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: {{ .Values.postgres.image }}
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.postgres.user | quote }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgres.password | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.database | quote }}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "eco-vpp.fullname" . }}-postgres-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-postgres
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  selector:
+    app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+    component: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+{{- end -}}

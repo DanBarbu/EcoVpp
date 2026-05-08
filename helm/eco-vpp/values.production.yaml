@@ -1,0 +1,33 @@
+# Production overrides — flip dryRun off and provide secrets via sealed-secrets
+# or external-secrets. Do NOT commit real values here.
+
+ingestToken: "REPLACE_WITH_SEALED_SECRET"
+
+webhookReceiver:
+  replicas: 4
+  resources:
+    limits: { cpu: 1000m, memory: 1Gi }
+    requests: { cpu: 250m, memory: 256Mi }
+
+flexibilityEngine:
+  replicas: 2
+  pollIntervalSeconds: 3
+
+settlement:
+  dryRun: false
+  rpcUrl: "https://rpc.energyweb.org"
+  originContract: "0xPRODUCTION_CONTRACT"
+  batchIntervalSeconds: 30
+
+postgres:
+  storage: 100Gi
+
+dashboard:
+  replicas: 3
+
+ingress:
+  enabled: true
+  host: eco-vpp.energy
+  tls:
+    enabled: true
+    secretName: eco-vpp-tls

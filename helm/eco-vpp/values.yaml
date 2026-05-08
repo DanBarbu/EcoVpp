@@ -1,0 +1,102 @@
+image:
+  registry: ghcr.io
+  repository: danbarbu/ecovpp
+  pullPolicy: IfNotPresent
+  tag: "0.1.0"
+
+ingestToken: "change-me"
+
+postgres:
+  enabled: true
+  image: postgis/postgis:16-3.4
+  password: "eco"
+  database: "ecovpp"
+  user: "eco"
+  storage: 10Gi
+
+flexmeasures:
+  enabled: true
+  image: lfenergy/flexmeasures:latest
+  url: "http://eco-vpp-flexmeasures:5000"
+  token: ""
+  sensorId: 1
+  forecastSensorId: 2
+
+mainflux:
+  mqttHost: "eco-vpp-mainflux-mqtt"
+  mqttPort: 1883
+  loadTopic: "ecovpp/commands/load_limit"
+
+webhookReceiver:
+  replicas: 2
+  service:
+    type: ClusterIP
+    port: 8000
+  resources:
+    limits: { cpu: 500m, memory: 512Mi }
+    requests: { cpu: 100m, memory: 128Mi }
+
+flexibilityEngine:
+  replicas: 1
+  metricsPort: 8001
+  pollIntervalSeconds: 5
+  priceLow: 40
+  priceHigh: 200
+  resources:
+    limits: { cpu: 500m, memory: 256Mi }
+    requests: { cpu: 50m, memory: 64Mi }
+
+settlement:
+  replicas: 1
+  service:
+    type: ClusterIP
+    port: 8002
+  dryRun: true
+  rpcUrl: "https://volta-rpc.energyweb.org"
+  privateKey: ""
+  originContract: ""
+  batchIntervalSeconds: 60
+  resources:
+    limits: { cpu: 500m, memory: 256Mi }
+    requests: { cpu: 50m, memory: 64Mi }
+
+redIiAllocator:
+  enabled: true
+  intervalMinutes: 15
+  internalPriceEurKwh: 0.18
+  gsy:
+    url: ""
+    token: ""
+
+dashboard:
+  replicas: 2
+  service:
+    type: ClusterIP
+    port: 80
+  resources:
+    limits: { cpu: 200m, memory: 128Mi }
+    requests: { cpu: 25m, memory: 32Mi }
+
+forecast:
+  enabled: true
+  schedule: "5 * * * *"
+  site:
+    lat: 44.4268
+    lon: 26.1025
+    panelKwp: 5.0
+    tilt: 30
+    azimuth: 180
+
+esp32:
+  wifiSsid: ""
+  wifiPass: ""
+  mqttBroker: ""
+  deviceDid: "did:ethr:volta:0x000000"
+
+ingress:
+  enabled: false
+  className: nginx
+  host: eco-vpp.example.org
+  tls:
+    enabled: false
+    secretName: ""

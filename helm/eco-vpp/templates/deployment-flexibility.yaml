@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-flex
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.flexibilityEngine.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+      component: flex
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        component: flex
+    spec:
+      containers:
+        - name: flex
+          image: {{ include "eco-vpp.image" (dict "Values" .Values "component" "flexibility-engine") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.flexibilityEngine.metricsPort }}
+          env:
+            - name: FLEXMEASURES_URL
+              value: {{ .Values.flexmeasures.url | quote }}
+            - name: FLEXMEASURES_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eco-vpp.fullname" . }}-secrets
+                  key: flexmeasuresToken
+            - name: FLEXMEASURES_SENSOR_ID
+              value: {{ .Values.flexmeasures.sensorId | quote }}
+            - name: WEBHOOK_URL
+              value: "http://{{ include "eco-vpp.fullname" . }}-webhook:{{ .Values.webhookReceiver.service.port }}"
+            - name: INGEST_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eco-vpp.fullname" . }}-secrets
+                  key: ingestToken
+            - name: MQTT_HOST
+              value: {{ .Values.mainflux.mqttHost | quote }}
+            - name: MQTT_PORT
+              value: {{ .Values.mainflux.mqttPort | quote }}
+            - name: MQTT_LOAD_TOPIC
+              value: {{ .Values.mainflux.loadTopic | quote }}
+            - name: POLL_INTERVAL_S
+              value: {{ .Values.flexibilityEngine.pollIntervalSeconds | quote }}
+            - name: PRICE_LOW
+              value: {{ .Values.flexibilityEngine.priceLow | quote }}
+            - name: PRICE_HIGH
+              value: {{ .Values.flexibilityEngine.priceHigh | quote }}
+            - name: METRICS_PORT
+              value: {{ .Values.flexibilityEngine.metricsPort | quote }}
+          resources: {{- toYaml .Values.flexibilityEngine.resources | nindent 12 }}
