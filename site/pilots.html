@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pilot sites — ECO-VPP</title>
+  <meta name="description" content="ECO-VPP pilot deployments across Romania, Italy, Spain, Switzerland, and Moldova." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="pills"><span class="pill">5 countries</span><span class="pill">Multi-tenant</span><span class="pill">RED II + IEMD</span></div>
+    <h1>Pilot sites.</h1>
+    <p class="lead">Five reference deployments stress-test the platform across distinct regulatory regimes, climates, and grid topologies. Each one is a single Helm release, isolated by namespace and tenant DID.</p>
+  </section>
+
+  <section>
+    <div class="pilot-list">
+      <div class="pilot">
+        <div class="flag">🇷🇴</div>
+        <div>
+          <h3>Bucharest, Romania</h3>
+          <p>54-apartment condominium, 32 kWp shared rooftop. Reference site for analog → digital meter migration via ESP32 dial OCR.</p>
+          <div class="meta"><span class="badge green">Live</span><span class="badge">RED II</span><span class="badge">HaLow ingest</span></div>
+        </div>
+      </div>
+      <div class="pilot">
+        <div class="flag">🇮🇹</div>
+        <div>
+          <h3>Milan, Italy</h3>
+          <p>Two adjacent residential blocks (78 units), shared battery. Reference for the GSY-e P2P market integration and the Italian CER framework.</p>
+          <div class="meta"><span class="badge amber">Onboarding</span><span class="badge">GSY-e P2P</span></div>
+        </div>
+      </div>
+      <div class="pilot">
+        <div class="flag">🇪🇸</div>
+        <div>
+          <h3>Valencia, Spain</h3>
+          <p>Mixed-use building, EV-heavy load profile. Reference for the flexibility-engine SET_LOAD_LIMIT path and EV charger curtailment.</p>
+          <div class="meta"><span class="badge amber">Onboarding</span><span class="badge">EV flex</span></div>
+        </div>
+      </div>
+      <div class="pilot">
+        <div class="flag">🇨🇭</div>
+        <div>
+          <h3>Zurich, Switzerland</h3>
+          <p>Cooperative housing (110 units), district-heating tie-in. Reference for ZEV / Eigenverbrauchsgemeinschaft compliance and heat-pump dispatch.</p>
+          <div class="meta"><span class="badge">Planned 2026 Q3</span><span class="badge">Heat pump</span></div>
+        </div>
+      </div>
+      <div class="pilot">
+        <div class="flag">🇲🇩</div>
+        <div>
+          <h3>Chișinău, Moldova</h3>
+          <p>EU-accession test site. Reference for cross-border deployment, lower-bandwidth HaLow links, and offline-tolerant settlement queueing.</p>
+          <div class="meta"><span class="badge">Planned 2026 Q4</span><span class="badge">Cross-border</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What every pilot ships with</h2>
+    <div class="grid">
+      <div class="card"><h3>Tenant isolation</h3><p>Dedicated Kubernetes namespace, dedicated PostgreSQL schema, per-tenant DIDs. One Helm release per pilot.</p></div>
+      <div class="card"><h3>Local override</h3><p>Hardware override pin on every node. Residents can opt out at any time without taking the building offline.</p></div>
+      <div class="card"><h3>Operator dashboard</h3><p>Real-time view of ingest rates, RED II shares, dispatch incentives, and on-chain settlement status.</p></div>
+      <div class="card"><h3>Audit-ready</h3><p>MiCA-compliant settlement log out of the box. Every share has an immutable Merkle proof.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="callout">
+      <h3>Run a pilot in your community</h3>
+      <p>The platform is white-label and Apache-licensed. Get in touch and we'll help you scope a pilot.</p>
+      <div class="cta-row" style="margin-top:1rem">
+        <a class="btn" href="contact.html">Contact us →</a>
+        <a class="btn alt" href="https://github.com/DanBarbu/EcoVpp">Read the source</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

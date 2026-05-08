@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Features — ECO-VPP</title>
+  <meta name="description" content="Every component of the ECO-VPP platform: ingest, RED II sharing, VPP dispatch, settlement, forecasting, dashboard." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="pills"><span class="pill">Sprints 0 → 5</span><span class="pill">Production-ready</span></div>
+    <h1>Features.</h1>
+    <p class="lead">Every component is open-source, containerised, and wired into a single Helm chart. Use the platform as-is or pick the bricks you need.</p>
+  </section>
+
+  <section>
+    <h2>Sprint 0 — Foundation &amp; Hardware Handshake</h2>
+    <p class="section-lead">Silicon-to-Cloud pipeline over 802.11ah (HaLow), tolerant to multi-second link latency.</p>
+    <div class="grid">
+      <div class="card"><h3>HaLow-tolerant ingest</h3><p>FastAPI <code>POST /api/v1/telemetry/ingest</code> with device-authoritative timestamps and exponential back-off retries on the device side.</p></div>
+      <div class="card"><h3>MQTT bridge</h3><p>Mainflux / Mosquitto bridge ships with the chart. Topics use the asset DID for tenant isolation.</p></div>
+      <div class="card"><h3>PostgreSQL + PostGIS</h3><p>Time-indexed telemetry, asset registry, energy_shares ledger, low-confidence verification queue.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sprint 1 — Edge-AI &amp; Meter Digitisation</h2>
+    <div class="grid">
+      <div class="card"><h3>Analog dial OCR</h3><p>AI-on-the-edge-device build runs on the ESP32-S3 + camera, returning a confidence score with every reading.</p></div>
+      <div class="card"><h3>Confidence routing</h3><p>Readings &lt;&nbsp;0.80 land in <code>verification_queue</code> and surface in the dashboard for one-click manual approval.</p></div>
+      <div class="card"><h3>Virtual meters</h3><p>Sensor DIDs (Decentralized Identifiers) map to virtual meters and to RED II sharing groups.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sprint 2 — RED II Collective Self-Consumption</h2>
+    <div class="grid">
+      <div class="card"><h3>Pro-rata allocator</h3><p>Dedicated <code>red-ii-allocator</code> service, runs every 15 min, writes priced share rows into <code>energy_shares</code>.</p></div>
+      <div class="card"><h3>Surplus to GSY-e</h3><p>Leftover surplus auto-posts as P2P offers to <a href="https://github.com/gridsingularity/gsy-e">GSY-e</a> at the configured markup.</p></div>
+      <div class="card"><h3>Resident credits</h3><p>Bill credits visible in the dashboard within minutes of production.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sprint 3 — VPP Dispatcher &amp; Active Load Control</h2>
+    <div class="grid">
+      <div class="card"><h3>FlexMeasures forecasting</h3><p>Hourly Open-Meteo GTI → DC kW upload via <code>POST /sensors/&lt;id&gt;/forecasts/trigger</code> + poll.</p></div>
+      <div class="card"><h3>SET_LOAD_LIMIT</h3><p>Price → curtailment ratio → MQTT command. Edge actuators cut EV/heat-pump load to the published limit.</p></div>
+      <div class="card"><h3>&lt;&nbsp;3 s end-to-end</h3><p>Cloud price tick to edge limit. Verified by Prometheus histogram in the engine.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sprint 4 — Blockchain Settlement &amp; Regulatory Hardening</h2>
+    <div class="grid">
+      <div class="card"><h3>Energy Web Origin</h3><p>Per-batch SHA-256 anchor on EW Origin smart contracts. Dry-run mode toggles via Helm value for staging environments.</p></div>
+      <div class="card"><h3>Guarantees of Origin</h3><p>NFT minted per asset + batch. Listed via <code>GET /api/v1/certificates</code>.</p></div>
+      <div class="card"><h3>ZK / Merkle proofs</h3><p><code>GET /api/v1/proof/&lt;tx&gt;</code> returns a Merkle-tree proof that the row was included in the batch — no PII leaked.</p></div>
+      <div class="card"><h3>MiCA-ready audit</h3><p>Settlement transactions, prices, and DIDs form an immutable audit trail consumable by MiCA-compliant reporting tools.</p></div>
+      <div class="card"><h3>Local override</h3><p>Every node firmware honours a local manual override pin (RED II / IEMD residential safety requirement).</p></div>
+      <div class="card"><h3>GDPR posture</h3><p>PII stays in the relational DB. Only DIDs and consumption deltas reach the chain.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sprint 5 — Scale &amp; Resilience</h2>
+    <div class="grid">
+      <div class="card"><h3>K6 load test</h3><p>1,000 ingest req/s sustained, p99 &lt; 1.5 s. Lives in <code>tests/k6/ingest_load.js</code>.</p></div>
+      <div class="card"><h3>Chaos Mesh</h3><p>Pod-kill on the HaLow gateway and network partition vs. the EW RPC, validating &lt; 30 s RTO.</p></div>
+      <div class="card"><h3>Kubernetes HPA</h3><p>Horizontal autoscaling on CPU for the ingest tier — 2 → 20 replicas during peak VPP events.</p></div>
+      <div class="card"><h3>One-click Helm</h3><p>Cross-border deployable: <code>helm upgrade --install eco-vpp ./helm/eco-vpp</code>.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Open-source bricks we integrate</h2>
+    <div class="pilot-list">
+      <div class="pilot"><div class="flag">📡</div><div><h3>Mainflux IoT</h3><p>MQTT message broker + device management.</p></div></div>
+      <div class="pilot"><div class="flag">⚙️</div><div><h3>FlexMeasures</h3><p>Forecasting + scheduling for energy assets.</p></div></div>
+      <div class="pilot"><div class="flag">🔗</div><div><h3>Energy Web Origin</h3><p>Settlement + Guarantees of Origin smart contracts.</p></div></div>
+      <div class="pilot"><div class="flag">🆔</div><div><h3>Energy Web DID</h3><p>Self-sovereign identity for prosumers and assets.</p></div></div>
+      <div class="pilot"><div class="flag">🛒</div><div><h3>Grid Singularity GSY-e</h3><p>Local P2P energy market.</p></div></div>
+      <div class="pilot"><div class="flag">📷</div><div><h3>AI-on-the-edge-device</h3><p>On-ESP32 OCR for analog dial digitisation.</p></div></div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>About — ECO-VPP</title>
+  <meta name="description" content="The ECO-VPP project, its team, the Horizon Europe context, and the technology choices behind a sub-€20 Virtual Power Plant." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="pills"><span class="pill">Apache-2.0</span><span class="pill">Horizon Europe</span><span class="pill">TRL-7</span></div>
+    <h1>About ECO-VPP.</h1>
+    <p class="lead">A white-label platform built to dismantle the financial barriers of the energy transition — letting a 50-apartment block behave on the grid like a single 200 kW asset.</p>
+  </section>
+
+  <section>
+    <h2>The problem</h2>
+    <p style="color:var(--muted);max-width:820px;line-height:1.65">Most condominium residents can't afford a private solar + battery setup, and even when a building has rooftop PV, sharing it across apartments under EU's <strong>RED II Collective Self-Consumption</strong> rules is operationally hard. Existing VPP platforms target utilities and industrial sites — not the multi-unit residential market where 60% of Europeans live.</p>
+  </section>
+
+  <section>
+    <h2>Our approach</h2>
+    <div class="grid">
+      <div class="card"><h3>Sub-€20 hardware</h3><p>ESP32-S3 + ADE7913 metering frontend + 802.11ah HaLow modem. Cheap enough that the building covers it from the first month of shared solar.</p></div>
+      <div class="card"><h3>Open-source bricks</h3><p>Mainflux, FlexMeasures, GSY-e, Energy Web Origin/DID, AI-on-the-edge-device. We integrate, we don't reinvent.</p></div>
+      <div class="card"><h3>Sharing-first</h3><p>RED II priority: solar serves the community before it touches the wholesale grid. Surplus exits via the local P2P market, never as a passive feed-in tariff.</p></div>
+      <div class="card"><h3>Resident-respecting</h3><p>PII never leaves the building's database. Every node has a manual override pin. Privacy-preserving Merkle proofs replace raw consumption data on-chain.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Roadmap</h2>
+    <div class="grid">
+      <div class="card"><h3>Sprint 0–2 ✅</h3><p>HaLow ingest, edge OCR, RED II Collective Self-Consumption sharing.</p></div>
+      <div class="card"><h3>Sprint 3 ✅</h3><p>VPP dispatcher with FlexMeasures forecasting and SET_LOAD_LIMIT actuator path.</p></div>
+      <div class="card"><h3>Sprint 4 ✅</h3><p>Energy Web Origin settlement, NFT Guarantees of Origin, Merkle proofs.</p></div>
+      <div class="card"><h3>Sprint 5 ✅</h3><p>K6 load test, Chaos Mesh resilience, Helm chart for cross-border deploy.</p></div>
+      <div class="card"><h3>Pilot wave 1 (2026)</h3><p>Bucharest live; Milan + Valencia onboarding.</p></div>
+      <div class="card"><h3>Pilot wave 2 (2026 H2)</h3><p>Zurich + Chișinău. Local-flexibility-market certification.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>FAQ</h2>
+    <details><summary>Is the platform really open-source?</summary><p>Yes — Apache-2.0 license, full source on GitHub, no contributor-license-agreement required. White-label use (rebranding for your own community) is explicitly allowed.</p></details>
+    <details><summary>Do residents need crypto wallets?</summary><p>No. DIDs are managed by the building operator. Residents see euro amounts and bill credits — the on-chain settlement is invisible to them.</p></details>
+    <details><summary>What if the cloud goes down?</summary><p>Edge nodes buffer telemetry locally and replay on reconnect. The settlement service queues unsettled rows and resumes anchoring once the EW RPC is reachable. RTO target: 30 s. Verified by Chaos Mesh experiments shipped in the repo.</p></details>
+    <details><summary>How do you keep PII off-chain?</summary><p>Only DIDs (random opaque identifiers) and kWh deltas reach the chain. Names, addresses, and meter readings stay in the relational DB. Operators can serve <code>GET /api/v1/proof/&lt;tx&gt;</code> Merkle proofs for audit without exposing any PII.</p></details>
+    <details><summary>Can I run only the parts I need?</summary><p>Each service has its own image, deploy manifest, and Helm value flag (<code>foo.enabled: false</code>). Run only the webhook-receiver if you just need ingest. Run the full chain for a production pilot.</p></details>
+    <details><summary>What about MiCA / EU crypto regulation?</summary><p>The settlement layer produces a tradable Guarantee of Origin (GoO), which is the regulated artefact — not the underlying token. Settlement records form a MiCA-ready audit trail.</p></details>
+  </section>
+
+  <section>
+    <h2>Project context</h2>
+    <p style="color:var(--muted);max-width:820px;line-height:1.65">ECO-VPP is the technical backbone for a <strong>HORIZON-CL5-2026-02-D3-20</strong> Horizon Europe Clean Energy Transition application. It integrates the sub-€20 hardware ecosystem, the SaMHow legacy, and the open-source brick inventory into a TRL-7 production prototype ready for cross-border deployment.</p>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>
