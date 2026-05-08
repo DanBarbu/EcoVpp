@@ -20,6 +20,16 @@ services:
     volumes:
       - ./infra/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
+  flexmeasures:
+    image: lfenergy/flexmeasures:latest
+    environment:
+      SQLALCHEMY_DATABASE_URI: postgresql://eco:eco@postgres:5432/ecovpp
+      FLEXMEASURES_MODE: development
+    ports: ["5000:5000"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   webhook-receiver:
     build: ./services/webhook-receiver
     environment:

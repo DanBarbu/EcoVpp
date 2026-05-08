@@ -46,8 +46,8 @@ jobs:
           pip install -r requirements.txt
           pip install pytest ruff
           ruff check . || true
-          if compgen -G "tests/*.py" > /dev/null; then pytest -q; fi
           python -m py_compile $(ls *.py)
+          if compgen -G "tests/*.py" > /dev/null; then PYTHONPATH=. pytest -q tests; fi
 
   build-and-push:
     needs: [helm-lint, python-tests]
@@ -100,8 +100,16 @@ jobs:
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/ecovpp/${{ matrix.name }}:sha-${{ github.sha }}
           severity: CRITICAL,HIGH
+          format: sarif
+          output: trivy-${{ matrix.name }}.sarif
           exit-code: "0"
           ignore-unfixed: true
+      - name: Upload Trivy SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-${{ matrix.name }}.sarif
+          category: trivy-${{ matrix.name }}
 
   publish-helm:
     needs: build-and-push

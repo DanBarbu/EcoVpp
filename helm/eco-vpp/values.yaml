@@ -23,6 +23,8 @@ flexmeasures:
   forecastSensorId: 2
 
 mainflux:
+  enabled: true
+  image: eclipse-mosquitto:2.0
   mqttHost: "eco-vpp-mainflux-mqtt"
   mqttPort: 1883
   loadTopic: "ecovpp/commands/load_limit"
