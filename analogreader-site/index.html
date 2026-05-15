@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>analogreader.online — Digitise your power, gas, and water meters</title>
+  <meta name="description" content="Take a photo of your analog meter. Get a digital reading, monthly consumption charts, and bill estimates — for electricity, gas, and water." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <meta property="og:title" content="analogreader.online" />
+  <meta property="og:description" content="Snap a meter, get a digital log. Power, gas, and water — one app." />
+  <meta property="og:type" content="website" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero center">
+    <div class="pills">
+      <span class="pill">⚡ Electricity</span>
+      <span class="pill">🔥 Gas</span>
+      <span class="pill">💧 Water</span>
+      <span class="pill">📷 Snap-and-go</span>
+    </div>
+    <h1>Old meter, <span class="grad">new readings</span>.</h1>
+    <p class="lead">Take a photo of your analog electricity, gas, or water meter. Our AI reads the dials and turns them into a digital log you can track, export, and share with your utility — without any new hardware on the wall.</p>
+    <div class="cta-row" style="justify-content:center">
+      <a class="btn" href="demo.html">Try the demo →</a>
+      <a class="btn alt" href="how-it-works.html">How it works</a>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="center" style="margin-bottom:.6rem">Three meters, one dashboard.</h2>
+    <p class="section-lead center" style="margin-left:auto;margin-right:auto">No utility-company contract, no smart-meter rollout to wait for. Works with any analog meter you can photograph clearly.</p>
+    <div class="grid">
+      <div class="card power">
+        <div class="icon">⚡</div>
+        <h3>Electricity</h3>
+        <p>Read the cyclometer dials or the digital LCD on your kWh meter. Track daily / monthly consumption and spot tariff-shoulder anomalies.</p>
+      </div>
+      <div class="card gas">
+        <div class="icon">🔥</div>
+        <h3>Natural gas</h3>
+        <p>Snap your m³ dial. Get usage trends across heating seasons and instant alerts if consumption spikes — a tell-tale sign of a leak.</p>
+      </div>
+      <div class="card water">
+        <div class="icon">💧</div>
+        <h3>Water</h3>
+        <p>Cold + hot meters, indoor + garden. Detect drips early; share readings with the building manager in one tap.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="center">How it works</h2>
+    <p class="section-lead center" style="margin-left:auto;margin-right:auto">From snapshot to digital log in under five seconds.</p>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Snap a photo</h3><p>Phone camera or webcam. We auto-detect the meter face and align it.</p></div>
+      <div class="step"><div class="n">2</div><h3>AI reads it</h3><p>On-device or cloud OCR returns the value plus a confidence score. Low-confidence readings are queued for quick human review.</p></div>
+      <div class="step"><div class="n">3</div><h3>See your trends</h3><p>Daily, weekly, monthly charts. Compare against last year, get bill projections, export CSV.</p></div>
+      <div class="step"><div class="n">4</div><h3>Share or report</h3><p>One-click report to your utility, your landlord, or your accountant. Photos and certificates stored as evidence.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="center">Why people use analogreader</h2>
+    <div class="grid">
+      <div class="card"><div class="icon">📈</div><h3>See where your money goes</h3><p>Bills feel arbitrary until you can see daily usage on a chart. Catch the leaky toilet, the always-on appliance, or the surprise heating bill <em>before</em> the invoice arrives.</p></div>
+      <div class="card"><div class="icon">🛡️</div><h3>Privacy by default</h3><p>Photos and readings stay on your account. We never share with utilities or third parties unless you press <em>Share</em>.</p></div>
+      <div class="card"><div class="icon">📦</div><h3>Works with what you have</h3><p>No new smart meter, no electrician visit. If you can photograph it, we can read it.</p></div>
+      <div class="card"><div class="icon">🌍</div><h3>Multi-tenant ready</h3><p>Building managers can onboard an entire condominium with one shared account and per-apartment access tokens.</p></div>
+      <div class="card"><div class="icon">🔌</div><h3>Open API</h3><p>Pull your own readings into Home Assistant, Grafana, or a spreadsheet. JSON + Webhooks supported on the Pro plan.</p></div>
+      <div class="card"><div class="icon">🧾</div><h3>Bill-ready exports</h3><p>Generate a signed PDF report or CSV in the format your local utility accepts. Works in EU, UK, and US markets.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="callout center">
+      <h3>30 seconds to your first reading</h3>
+      <p style="margin:.6rem auto 1.2rem;max-width:600px">No account needed for the demo. Drop a meter photo and watch it become a digital log.</p>
+      <a class="btn" href="demo.html">Try the demo →</a>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact — analogreader.online</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>Contact.</h1>
+    <p class="lead">Households, building managers, utilities, press — same form, we'll route it.</p>
+  </section>
+
+  <section class="row">
+    <div class="card">
+      <h3>Send a message</h3>
+      <form id="contact-form" novalidate>
+        <div class="field"><label for="name">Name</label><input class="input" id="name" name="name" required autocomplete="name" /></div>
+        <div class="field"><label for="email">Email</label><input class="input" id="email" name="email" type="email" required autocomplete="email" /></div>
+        <div class="field"><label for="org">Organisation (optional)</label><input class="input" id="org" name="organisation" autocomplete="organization" /></div>
+        <div class="field"><label for="topic">Topic</label>
+          <select class="select" id="topic" name="topic">
+            <option>Pro plan inquiry</option>
+            <option>Building / Team plan</option>
+            <option>Utility / Enterprise</option>
+            <option>API question</option>
+            <option>Bug report</option>
+            <option>Press</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field"><label for="message">Message</label><textarea class="textarea" id="message" name="message" rows="5" required></textarea></div>
+        <button class="btn" type="submit">Send →</button>
+      </form>
+      <div id="contact-result"></div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Direct email</h3>
+        <p>For anything urgent or NDA-track:</p>
+        <p><a href="mailto:hello@analogreader.online">hello@analogreader.online</a></p>
+      </div>
+      <div class="card" style="margin-top:1rem">
+        <h3>Wiring this form</h3>
+        <p>The submit handler in <code>assets/app.js</code> currently logs to console. Swap in:</p>
+        <ul style="color:var(--muted);font-size:.94rem;line-height:1.6;padding-left:1.1rem">
+          <li><strong>Netlify Forms</strong> — add <code>netlify</code> attribute to the form tag</li>
+          <li><strong>Cloudflare Worker</strong> — POST to your worker endpoint</li>
+          <li><strong>Mailchimp / SendGrid / HubSpot</strong> — same pattern</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

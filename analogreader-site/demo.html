@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Live demo — analogreader.online</title>
+  <meta name="description" content="Drop a meter photo and watch it become a digital reading. No signup needed." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero center">
+    <div class="pills"><span class="pill">No signup</span><span class="pill">Runs in your browser</span><span class="pill">Photos stay local</span></div>
+    <h1>Drop a meter, get a <span class="grad">reading</span>.</h1>
+    <p class="lead">The demo uses a mocked OCR endpoint so you can try the flow without an account. In production, the same UI calls the analogreader OCR API and persists the reading to your dashboard.</p>
+  </section>
+
+  <section>
+    <div class="row">
+      <div class="card">
+        <h3>Upload a meter photo</h3>
+        <div class="field" style="margin-top:.6rem">
+          <label for="meter-kind">Which meter?</label>
+          <select id="meter-kind" class="select">
+            <option value="power">⚡ Electricity (kWh)</option>
+            <option value="gas">🔥 Gas (m³)</option>
+            <option value="water">💧 Water (m³)</option>
+          </select>
+        </div>
+        <div id="dropzone" class="dropzone">
+          <div class="big">📷</div>
+          <p><strong>Drop a photo here</strong></p>
+          <p>or click to choose a file · JPG / PNG / HEIC</p>
+          <input type="file" accept="image/*" capture="environment" />
+        </div>
+        <div id="reading-result"></div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>What happens in production</h3>
+          <p style="color:var(--muted);font-size:.94rem;line-height:1.6;margin-top:.5rem">
+            1. Photo uploads to <code>POST /api/v1/readings/ocr</code> (multipart). The endpoint validates EXIF, hashes the image, and queues an OCR job.
+          </p>
+          <p style="color:var(--muted);font-size:.94rem;line-height:1.6;margin-top:.5rem">
+            2. The on-device or cloud model returns digits + confidence within 2–4 s.
+          </p>
+          <p style="color:var(--muted);font-size:.94rem;line-height:1.6;margin-top:.5rem">
+            3. If confidence ≥ 0.80, the reading is stored and chartable. Otherwise it lands in a verification queue.
+          </p>
+          <p style="color:var(--muted);font-size:.94rem;line-height:1.6;margin-top:.5rem">
+            4. A push notification (or webhook) fires for any subscribed integrations.
+          </p>
+        </div>
+        <div class="card" style="margin-top:1rem">
+          <h3>Wire this to a real backend</h3>
+          <pre>// in assets/app.js, replace mockOCR with:
+async function ocr(file, kind) {
+  const fd = new FormData();
+  fd.append('photo', file);
+  fd.append('kind', kind);
+  const r = await fetch('/api/v1/readings/ocr', { method: 'POST', body: fd });
+  return r.json();
+}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Last 30 days of consumption</h2>
+    <p class="section-lead">Mocked sample data — replace with <code>GET /api/v1/readings?kind=power&amp;days=30</code>.</p>
+    <div id="consumption-chart" class="chart" data-kind="power"></div>
+  </section>
+
+  <section>
+    <h2>Recent readings</h2>
+    <div class="card">
+      <table>
+        <thead><tr><th>Time</th><th>Meter</th><th class="num">Value</th><th>Confidence</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>14:32</td><td>⚡ Apt 1 · electricity</td><td class="num">48,213 kWh</td><td>0.97</td><td><span class="badge green">verified</span></td></tr>
+          <tr><td>14:30</td><td>💧 Apt 1 · water</td><td class="num">9,342 m³</td><td>0.92</td><td><span class="badge green">verified</span></td></tr>
+          <tr><td>14:28</td><td>🔥 Apt 1 · gas</td><td class="num">12,876 m³</td><td>0.74</td><td><span class="badge amber">in review</span></td></tr>
+          <tr><td>09:11</td><td>⚡ Garage · electricity</td><td class="num">2,107 kWh</td><td>0.98</td><td><span class="badge green">verified</span></td></tr>
+          <tr><td>08:50</td><td>💧 Apt 1 · water</td><td class="num">9,337 m³</td><td>0.95</td><td><span class="badge green">verified</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

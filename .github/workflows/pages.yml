@@ -22,11 +22,24 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Assemble Pages bundle
+        run: |
+          mkdir -p dist
+          cp -r site/. dist/
+          mkdir -p dist/analogreader
+          cp -r analogreader-site/. dist/analogreader/
+          # The repo serves two demos under one Pages site:
+          #   /                 → EcoVpp marketing + demo
+          #   /analogreader/    → analogreader.online demo (pre-deploy preview)
+          # When analogreader gets its own repo + custom domain, drop the
+          # /analogreader/ tree from here.
+
       - uses: actions/configure-pages@v5
         with:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: dist
       - id: deployment
         uses: actions/deploy-pages@v4
