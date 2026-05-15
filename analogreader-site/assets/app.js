@@ -4,6 +4,7 @@
     { href: '/', label: 'Home' },
     { href: '/how-it-works.html', label: 'How it works' },
     { href: '/features.html', label: 'Features' },
+    { href: '/app.html', label: 'The app' },
     { href: '/pricing.html', label: 'Pricing' },
     { href: '/demo.html', label: 'Try the demo' },
     { href: '/faq.html', label: 'FAQ' },
