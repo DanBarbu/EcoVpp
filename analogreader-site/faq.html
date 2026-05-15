@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FAQ — analogreader.online</title>
+  <meta name="description" content="Common questions about analogreader: accuracy, privacy, integrations, and pricing." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero center">
+    <h1>Questions, <span class="grad">answered</span>.</h1>
+    <p class="lead">If something isn't covered here, <a href="contact.html">drop us a line</a>.</p>
+  </section>
+
+  <section>
+    <h2>The product</h2>
+    <details><summary>Does this replace my utility's meter?</summary><p>No — it sits on top of it. Your physical meter stays exactly where it is. We just turn its analog face into a digital reading you can track, share, and export.</p></details>
+    <details><summary>How accurate is the OCR?</summary><p>Across our 12,000-photo benchmark of European meters, accuracy is <strong>99.2%</strong> on clear, well-lit photos. Anything where the model isn't confident lands in a verification queue.</p></details>
+    <details><summary>What if the OCR is wrong?</summary><p>You can correct any reading in two taps. The corrected value becomes part of the training data (with your permission). The original photo is preserved for audit.</p></details>
+    <details><summary>Can I track multiple buildings?</summary><p>Yes. Pro plan covers unlimited meters across unlimited properties. Building managers should use the Team plan for proper per-apartment access tokens.</p></details>
+  </section>
+
+  <section>
+    <h2>Privacy &amp; data</h2>
+    <details><summary>Where are my photos stored?</summary><p>Encrypted at rest in Frankfurt, Germany, by default. Enterprise plans can choose another region or run fully on-prem.</p></details>
+    <details><summary>Do you sell my data?</summary><p>No. Ever. Not aggregated, not anonymised, not for "research partners". analogreader is paid for by Pro/Team/Enterprise subscriptions, not by your data.</p></details>
+    <details><summary>Can I delete everything?</summary><p>Settings → Account → Erase. One click, immediate purge of photos and readings, account closed within 24 hours. We keep an irreversible cryptographic anchor of the deletion event for audit but no personal data.</p></details>
+    <details><summary>Is this GDPR-compliant?</summary><p>Yes. Full DPA available on request. EU users never have data leave the EU.</p></details>
+  </section>
+
+  <section>
+    <h2>Integrations</h2>
+    <details><summary>Can I push readings to Home Assistant / Grafana?</summary><p>Yes — via the open API (Pro and up). Webhooks supported for push, REST/JSON for pull. <a href="api.html">API docs</a>.</p></details>
+    <details><summary>Does it work with smart meters too?</summary><p>For displaying side-by-side, yes. For replacing the smart meter reading entirely, you don't need analogreader — your utility already does the digital read. We exist for the millions of analog meters still on European walls.</p></details>
+    <details><summary>Can I run a fixed camera and capture automatically?</summary><p>Absolutely. Reference firmware for ESP32-S3 + camera on <a href="https://github.com/DanBarbu/EcoVpp">GitHub</a>. Push readings via the API on whatever schedule you like.</p></details>
+  </section>
+
+  <section>
+    <h2>Billing</h2>
+    <details><summary>Is there a free trial?</summary><p>The Free plan is unlimited in time. The Pro plan has a 14-day free trial — no card required for the trial.</p></details>
+    <details><summary>What payment methods do you accept?</summary><p>Card, SEPA, and annual invoice (Team / Enterprise).</p></details>
+    <details><summary>Can I get a refund?</summary><p>Within the first 30 days, full refund, no questions. After that, pro-rata refund of the unused subscription period.</p></details>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

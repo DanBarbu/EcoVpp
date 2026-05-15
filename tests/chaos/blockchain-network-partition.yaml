@@ -1,0 +1,21 @@
+# Chaos Mesh experiment: partition the settlement service from the Energy Web
+# RPC endpoint for 60 s. Settlement should keep persisting unsettled rows and
+# resume anchoring once the partition heals.
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: blockchain-partition
+  namespace: eco-vpp
+spec:
+  action: partition
+  mode: all
+  selector:
+    namespaces: [eco-vpp]
+    labelSelectors:
+      app.kubernetes.io/name: eco-vpp
+      component: settlement
+  direction: to
+  externalTargets:
+    - "rpc.energyweb.org"
+    - "volta-rpc.energyweb.org"
+  duration: "60s"

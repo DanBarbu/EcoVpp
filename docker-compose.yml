@@ -1,0 +1,90 @@
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: eco
+      POSTGRES_PASSWORD: eco
+      POSTGRES_DB: ecovpp
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eco -d ecovpp"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mainflux-mqtt:
+    image: eclipse-mosquitto:2.0
+    ports: ["1883:1883"]
+    volumes:
+      - ./infra/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  flexmeasures:
+    image: lfenergy/flexmeasures:latest
+    environment:
+      SQLALCHEMY_DATABASE_URI: postgresql://eco:eco@postgres:5432/ecovpp
+      FLEXMEASURES_MODE: development
+    ports: ["5000:5000"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  webhook-receiver:
+    build: ./services/webhook-receiver
+    environment:
+      DATABASE_URL: postgresql://eco:eco@postgres:5432/ecovpp
+      INGEST_TOKEN: dev-token
+      LOG_LEVEL: INFO
+    ports: ["8000:8000"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  flexibility-engine:
+    build: ./services/flexibility-engine
+    environment:
+      WEBHOOK_URL: http://webhook-receiver:8000
+      INGEST_TOKEN: dev-token
+      MQTT_HOST: mainflux-mqtt
+      MQTT_PORT: 1883
+      MQTT_LOAD_TOPIC: ecovpp/commands/load_limit
+      POLL_INTERVAL_S: 5
+      FLEXMEASURES_TOKEN: ""    # empty = dev fallback (synthetic price wave)
+      LOG_LEVEL: INFO
+    ports: ["8001:8001"]
+    depends_on:
+      - webhook-receiver
+      - mainflux-mqtt
+
+  red-ii-allocator:
+    build: ./services/red-ii-allocator
+    environment:
+      DATABASE_URL: postgresql://eco:eco@postgres:5432/ecovpp
+      ALLOCATION_INTERVAL_MIN: 15
+      INTERNAL_PRICE_EUR_KWH: 0.18
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  settlement:
+    build: ./services/settlement
+    environment:
+      DATABASE_URL: postgresql://eco:eco@postgres:5432/ecovpp
+      SETTLEMENT_DRY_RUN: "true"
+      BATCH_INTERVAL_S: 60
+    ports: ["8002:8002"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  dashboard:
+    build: ./dashboard
+    environment:
+      VITE_API_TARGET: http://webhook-receiver:8000
+    ports: ["3000:80"]
+    depends_on:
+      - webhook-receiver
+
+volumes:
+  pgdata:

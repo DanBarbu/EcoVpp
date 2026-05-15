@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ECO-VPP — Energy Community Virtual Power Plant</title>
+  <meta name="description" content="ECO-VPP turns multi-unit residential buildings into a Virtual Power Plant. RED II Collective Self-Consumption, GSY-e P2P market, Energy Web settlement on a sub-€20 ESP32 node." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <meta property="og:title" content="ECO-VPP" />
+  <meta property="og:description" content="Turn a condominium into a Virtual Power Plant." />
+  <meta property="og:type" content="website" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="pills">
+      <span class="pill">HORIZON-CL5-2026-02-D3-20</span>
+      <span class="pill">TRL-7</span>
+      <span class="pill">RED II</span>
+      <span class="pill">GSY-e P2P</span>
+      <span class="pill">Energy Web Origin</span>
+      <span class="pill">FlexMeasures</span>
+    </div>
+    <h1>Turn a condominium into a Virtual Power Plant.</h1>
+    <p class="lead">White-label, full-stack orchestration platform that lets multi-unit residential buildings share rooftop solar under <strong>RED II Collective Self-Consumption</strong>, dispatch flexibility on local markets, and settle every kWh on-chain — running on a sub-€20 ESP32 + HaLow node.</p>
+    <div class="cta-row">
+      <a class="btn" href="demo.html">See live demo →</a>
+      <a class="btn alt" href="https://github.com/DanBarbu/EcoVpp">View source on GitHub</a>
+    </div>
+  </section>
+
+  <section>
+    <h2>What it does</h2>
+    <p class="section-lead">Six microservices, one Helm chart, end-to-end from a sub-€20 hardware node to on-chain settlement.</p>
+    <div class="grid">
+      <div class="card"><h3>⚡ Sub-€20 ingest</h3><p>ESP32-S3 + ADE7913 + 802.11ah HaLow. Telemetry POSTed with HaLow-tolerant retry; OCR confidence &lt; 0.80 routes to manual verification.</p></div>
+      <div class="card"><h3>☀️ RED II sharing</h3><p>15-minute pro-rata Collective Self-Consumption allocator. Surplus auto-listed as offers on the GSY-e P2P market.</p></div>
+      <div class="card"><h3>🎚️ Flexibility dispatch</h3><p>FlexMeasures price/congestion → <code>SET_LOAD_LIMIT</code> over MQTT to EV chargers and heat pumps. Cloud-to-edge &lt; 3 s.</p></div>
+      <div class="card"><h3>🔗 On-chain settlement</h3><p>Every batch hashed and anchored on Energy Web Origin. NFT Guarantees of Origin minted per asset+batch. PII stays off-chain.</p></div>
+      <div class="card"><h3>📈 Forecasting</h3><p>Hourly Open-Meteo GTI → DC kW forecast pushed via FlexMeasures v0.31 trigger/poll API.</p></div>
+      <div class="card"><h3>🛡️ Resilient</h3><p>Helm chart with HPA, K6 load test (1k req/s), Chaos Mesh experiments. RTO target &lt; 30 s.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>By the numbers</h2>
+    <div class="grid">
+      <div class="card"><div class="lead">€20</div><p>Hardware cost per node — ESP32-S3 + ADE7913 metering frontend.</p></div>
+      <div class="card"><div class="lead">&lt;3 s</div><p>End-to-end latency from cloud price tick to edge load-limit execution.</p></div>
+      <div class="card"><div class="lead">10 k</div><p>Prosumers per Helm release (Sprint 5 acceptance scale).</p></div>
+      <div class="card"><div class="lead">5</div><p>Pilot countries: Romania, Italy, Spain, Switzerland, Moldova.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Architecture at a glance</h2>
+    <div class="arch"><pre>
+  ┌─ ESP32-S3 nodes (HaLow) ──► Mainflux MQTT ──► webhook-receiver ──► PostgreSQL+PostGIS
+  │                                                          │           ▲
+  │                                                          ▼           │
+  │                              red-ii-allocator ──► energy_shares ──► settlement (EW Origin)
+  │
+  └─► FlexMeasures (forecast + price) ──► flexibility-engine ──► MQTT SET_LOAD_LIMIT
+                                                  │
+                                                  └──► dashboard (REST + WebSocket)</pre></div>
+    <p class="section-lead" style="margin-top:1rem">Full diagram and component map: <a href="https://github.com/DanBarbu/EcoVpp/blob/main/docs/architecture.md">docs/architecture.md</a>.</p>
+  </section>
+
+  <section>
+    <div class="callout">
+      <h3>Try it locally in 2 commands</h3>
+      <pre style="margin:.6rem 0 0">git clone https://github.com/DanBarbu/EcoVpp.git
+cd EcoVpp && docker compose up --build -d</pre>
+      <p style="margin:.7rem 0 0;color:var(--muted)">Then open <code>http://localhost:3000</code>.</p>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

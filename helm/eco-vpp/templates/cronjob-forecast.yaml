@@ -1,0 +1,42 @@
+{{- if .Values.forecast.enabled -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-forecast
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.forecast.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: forecast
+              image: {{ include "eco-vpp.image" (dict "Values" .Values "component" "forecast") }}
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              env:
+                - name: SITE_LAT
+                  value: {{ .Values.forecast.site.lat | quote }}
+                - name: SITE_LON
+                  value: {{ .Values.forecast.site.lon | quote }}
+                - name: PANEL_KWP
+                  value: {{ .Values.forecast.site.panelKwp | quote }}
+                - name: PANEL_TILT
+                  value: {{ .Values.forecast.site.tilt | quote }}
+                - name: PANEL_AZIMUTH
+                  value: {{ .Values.forecast.site.azimuth | quote }}
+                - name: FLEXMEASURES_URL
+                  value: {{ .Values.flexmeasures.url | quote }}
+                - name: FLEXMEASURES_FORECAST_SENSOR_ID
+                  value: {{ .Values.flexmeasures.forecastSensorId | quote }}
+                - name: FLEXMEASURES_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "eco-vpp.fullname" . }}-secrets
+                      key: flexmeasuresToken
+{{- end -}}

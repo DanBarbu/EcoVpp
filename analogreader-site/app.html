@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The app — analogreader.online</title>
+  <meta name="description" content="The live analogreader UI module — capture a meter, get a digital reading, track history. Works offline in mock mode." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="pills"><span class="pill">Real UI module</span><span class="pill">No signup</span><span class="pill">Works offline</span></div>
+    <h1>The <span class="grad">app</span>.</h1>
+    <p class="lead">This is the actual reusable UI module — a single <code>&lt;analog-reader&gt;</code> Web Component you can drop into any page. Capture or upload a meter photo, get a confidence-scored reading, and watch the local history build up. It runs in mock mode here; point the <code>endpoint</code> attribute at a real OCR API and it's production-ready.</p>
+  </section>
+
+  <section>
+    <div class="row">
+      <div>
+        <analog-reader kinds="power,gas,water" storage="analogreader.demo"></analog-reader>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Embed it anywhere</h3>
+          <p style="color:var(--muted);font-size:.93rem;line-height:1.6;margin:.4rem 0 .6rem">Two lines. No build step, no framework, no npm.</p>
+          <pre>&lt;script src="assets/analog-reader.js"&gt;&lt;/script&gt;
+&lt;analog-reader
+   endpoint="/api/v1/readings/ocr"
+   kinds="power,gas,water"&gt;
+&lt;/analog-reader&gt;</pre>
+          <p style="color:var(--muted);font-size:.93rem;line-height:1.6;margin-top:.6rem">Drop the <code>endpoint</code> attribute and it runs in offline mock mode (what you see on the left).</p>
+        </div>
+        <div class="card" style="margin-top:1rem">
+          <h3>It emits events</h3>
+          <pre>const el = document.querySelector('analog-reader');
+el.addEventListener('reading', e =&gt;
+  console.log(e.detail));        // {value,unit,confidence,cost,…}
+el.addEventListener('reading:review', e =&gt;
+  notifyOps(e.detail));          // confidence &lt; 0.80
+el.exportCSV();                  // programmatic export</pre>
+        </div>
+        <div class="card" style="margin-top:1rem">
+          <h3>Wire to the real OCR</h3>
+          <p style="color:var(--muted);font-size:.93rem;line-height:1.6;margin:.4rem 0 0">
+            The <code>endpoint</code> just needs to accept multipart <code>{photo, kind}</code> and return
+            <code>{ value, unit, confidence }</code>. The EcoVpp <code>webhook-receiver</code> service speaks this
+            contract — see <a href="api.html">the API page</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What this module does</h2>
+    <div class="grid">
+      <div class="card power"><div class="icon">⚡</div><h3>Multi-meter</h3><p>Electricity, gas, water — switch with the dropdown. Each has its own unit, tariff, and chart colour.</p></div>
+      <div class="card"><div class="icon">🎯</div><h3>Confidence gating</h3><p>Readings under 0.80 are flagged and fire a <code>reading:review</code> event for your ops queue.</p></div>
+      <div class="card"><div class="icon">💾</div><h3>Local history</h3><p>Readings persist in <code>localStorage</code> so the demo survives reloads. Disable with <code>storage=""</code>.</p></div>
+      <div class="card"><div class="icon">📊</div><h3>Built-in chart</h3><p>Auto-renders a bar chart of recent readings for the selected meter.</p></div>
+      <div class="card"><div class="icon">📥</div><h3>CSV export</h3><p>One click (or <code>.exportCSV()</code>) for a utility-ready CSV.</p></div>
+      <div class="card"><div class="icon">🔌</div><h3>Offline-safe</h3><p>If the live endpoint errors, it transparently falls back to mock so the UI never dead-ends.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="callout">
+      <h3>Same engine as EcoVpp</h3>
+      <p>This module is the consumer face of the open-source <a href="https://github.com/DanBarbu/EcoVpp">EcoVpp</a> meter-digitisation pipeline. Run the EcoVpp stack, point <code>endpoint</code> at its <code>webhook-receiver</code>, and you have a production meter app with on-chain settlement behind it.</p>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+<script src="assets/analog-reader.js"></script>
+</body>
+</html>

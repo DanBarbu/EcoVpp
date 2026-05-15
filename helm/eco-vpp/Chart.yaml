@@ -1,0 +1,17 @@
+apiVersion: v2
+name: eco-vpp
+description: ECO-VPP Energy Community Orchestrated Virtual Power Plant
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - vpp
+  - energy
+  - flexibility
+  - red-ii
+  - p2p
+home: https://github.com/DanBarbu/EcoVpp
+sources:
+  - https://github.com/DanBarbu/EcoVpp
+maintainers:
+  - name: DanBarbu
