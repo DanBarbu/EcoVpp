@@ -60,6 +60,49 @@ The contract is a list of `(epoch_seconds, value)` points in native units.
 | `PV_CAPACITY_KW`/`WIND_CAPACITY_KW` | 5000 / 2000 | installed renewable capacity |
 | `PRICE_*` | see `model.py` | merit-order curve calibration |
 
+## Correlation check & calibration against OPCOM (Romania)
+
+The pure-weather merit-order model is a baseline; real RO day-ahead prices
+(gas coupling, hydro, Cernavodă nuclear, RO–HU/BG/RS cross-border flows) won't
+correlate strongly with it. `validate.py` measures the correlation against OPCOM
+and adjusts the algorithm when it's below 90%.
+
+```bash
+# free token from https://transparency.entsoe.eu (My Account → API access)
+export ENTSOE_TOKEN=xxxxxxxx
+python validate.py --days 14
+# …or use a manually exported OPCOM PZU report:
+OPCOM_CSV=opcom_pzu.csv python validate.py --days 14
+```
+
+- **r ≥ 0.90** → keeps the merit-order model, refits its level (`p_zero`,
+  `slope`) to OPCOM, writes `calibration.json` with `mode: merit_order`.
+- **r < 0.90** → writes `mode: anchored`: the service then uses
+  `price_curve_anchored()`, where the **hourly day-ahead baseline is OPCOM** and
+  the weather/METOC nowcast only shapes it to 10-minute resolution. This makes
+  the delivered forecast track OPCOM by construction while keeping sub-hourly
+  value. The refit merit-order coefficients remain as the offline fallback for
+  real-time beyond the day-ahead horizon.
+
+`model.py` and the service load `calibration.json` automatically (path via
+`CALIBRATION_FILE`). Data source: **ENTSO-E Transparency Platform**, document
+type A44, RO bidding zone `10YRO-TEL------P` — the canonical machine-readable
+carrier of the OPCOM day-ahead price. The OPCOM website itself has no clean
+public API, hence ENTSO-E (or a manual CSV) as the source.
+
+### Key calibration env vars
+
+| Var | Default | Meaning |
+|-----|---------|---------|
+| `ENTSOE_TOKEN` | — | ENTSO-E API token (required for live OPCOM fetch) |
+| `OPCOM_CSV` | — | path to a `timestamp,price_eur_mwh` CSV fallback |
+| `RO_ZONE_EIC` | `10YRO-TEL------P` | RO bidding-zone EIC code |
+| `CORRELATION_THRESHOLD` | `0.90` | switch to anchored mode below this |
+| `CALIBRATION_FILE` | `calibration.json` | where the fitted calibration is stored |
+
+> Note: a live correlation run needs outbound network + the ENTSO-E token, so it
+> must run on your machine or in the cluster — not in a no-egress CI sandbox.
+
 ## Test
 
 ```bash

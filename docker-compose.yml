@@ -67,6 +67,9 @@ services:
       NOWCAST_STEP_MIN: 10
       METOC_NOWCAST: "0"        # set 1 once the METOC Lagrangian code is wired in
       PRICE_HORIZON_HOURS: 6
+      ENTSOE_TOKEN: ""          # set to enable OPCOM (RO day-ahead) correlation/anchoring
+      RO_ZONE_EIC: "10YRO-TEL------P"
+      CORRELATION_THRESHOLD: "0.90"
       LOG_LEVEL: INFO
     ports: ["8003:8003"]
 

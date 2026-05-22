@@ -37,6 +37,17 @@ PRICE_AT_ZERO_RESIDUAL = float(os.getenv("PRICE_AT_ZERO_EUR_MWH", "45"))
 PRICE_CURVE_SLOPE = float(os.getenv("PRICE_SLOPE_EUR_PER_MW", "22"))  # per MW of residual load
 PRICE_CAP = float(os.getenv("PRICE_CAP_EUR_MWH", "400"))
 
+# Apply a persisted OPCOM calibration if present (written by validate.py).
+# This recalibrates the merit-order curve to the RO market without code edits.
+try:
+    import calibration as _cal  # noqa: E402
+    _c = _cal.load()
+    if _c is not None:
+        PRICE_AT_ZERO_RESIDUAL = _c.p_zero
+        PRICE_CURVE_SLOPE = _c.slope
+except Exception:  # noqa: BLE001 - calibration is optional
+    _c = None
+
 
 @dataclass
 class PricePoint:
@@ -106,5 +117,51 @@ def price_curve(gti: Series, wind: Series, temperature: Series) -> list[PricePoi
             residual_load_kw=round(residual, 1),
             renewable_kw=round(renewable, 1),
             demand_kw=round(demand, 1),
+        ))
+    return out
+
+
+def _hour_start(ts: int) -> int:
+    return ts - (ts % 3600)
+
+
+def price_curve_anchored(opcom_hourly: Series, gti: Series, wind: Series,
+                         temperature: Series) -> list[PricePoint]:
+    """OPCOM-anchored 10-minute curve.
+
+    The hourly day-ahead baseline is OPCOM; the weather model only shapes the
+    intra-hour deviation. For each 10-min step we take the OPCOM price for that
+    hour and nudge it by the within-hour residual-load deviation from the hour's
+    mean, scaled by the (calibrated) merit-order slope. This tracks OPCOM at
+    hourly resolution by construction while preserving sub-hourly weather value.
+    """
+    op = dict(opcom_hourly)
+    gmap, wmap, tmap = dict(gti), dict(wind), dict(temperature)
+    steps = _align(gti, wind, temperature)
+
+    # Hour-mean residual load for the deviation term.
+    by_hour: dict[int, list[float]] = {}
+    residual_at: dict[int, float] = {}
+    for ts in steps:
+        residual = _demand_kw(tmap[ts], ts) - (_pv_power_kw(gmap[ts]) + _wind_power_kw(wmap[ts]))
+        residual_at[ts] = residual
+        by_hour.setdefault(_hour_start(ts), []).append(residual)
+    hour_mean = {h: sum(v) / len(v) for h, v in by_hour.items()}
+
+    out: list[PricePoint] = []
+    for ts in steps:
+        h = _hour_start(ts)
+        base = op.get(h)
+        if base is None:  # no OPCOM coverage for this hour → fall back to merit order
+            base = _merit_order_price(residual_at[ts])
+        dev_mw = (residual_at[ts] - hour_mean.get(h, residual_at[ts])) / 1000.0
+        price = max(PRICE_FLOOR, min(PRICE_CAP, base + PRICE_CURVE_SLOPE * dev_mw))
+        renewable = _pv_power_kw(gmap[ts]) + _wind_power_kw(wmap[ts])
+        out.append(PricePoint(
+            ts=ts,
+            price_eur_mwh=round(price, 2),
+            residual_load_kw=round(residual_at[ts], 1),
+            renewable_kw=round(renewable, 1),
+            demand_kw=round(_demand_kw(tmap[ts], ts), 1),
         ))
     return out

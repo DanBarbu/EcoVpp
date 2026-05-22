@@ -42,6 +42,12 @@ spec:
               value: {{ .Values.priceForecast.pvCapacityKw | quote }}
             - name: WIND_CAPACITY_KW
               value: {{ .Values.priceForecast.windCapacityKw | quote }}
+            - name: ENTSOE_TOKEN
+              value: {{ .Values.priceForecast.entsoeToken | quote }}
+            - name: RO_ZONE_EIC
+              value: {{ .Values.priceForecast.roZoneEic | quote }}
+            - name: CORRELATION_THRESHOLD
+              value: {{ .Values.priceForecast.correlationThreshold | quote }}
           readinessProbe:
             httpGet: { path: /healthz, port: 8003 }
             initialDelaySeconds: 5

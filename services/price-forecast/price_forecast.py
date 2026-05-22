@@ -42,17 +42,38 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 _cache: dict[str, object] = {"ts": 0.0, "points": [], "provider": "", "resolution_min": 0}
 
 
+def _opcom_anchor_enabled() -> bool:
+    """Anchor to OPCOM when a calibration says so (correlation was < threshold)."""
+    try:
+        import calibration
+        cal = calibration.load()
+        return bool(cal and cal.mode == "anchored")
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def _refresh(force: bool = False) -> None:
     now = time.time()
     if not force and (now - float(_cache["ts"])) < CACHE_TTL_S and _cache["points"]:
         return
-    with httpx.Client(timeout=12.0) as c:
+    with httpx.Client(timeout=15.0) as c:
         wx = weather.fetch(horizon_hours=HORIZON_HOURS, client=c)
-    points = model.price_curve(wx.gti, wx.wind, wx.temperature)
+        provider = wx.provider
+        if _opcom_anchor_enabled():
+            try:
+                import opcom
+                op = opcom.day_ahead(client=c)
+                points = model.price_curve_anchored(op, wx.gti, wx.wind, wx.temperature)
+                provider = f"{wx.provider}+opcom-anchored"
+            except Exception as exc:  # noqa: BLE001 - degrade gracefully to merit order
+                log.warning("OPCOM anchor unavailable (%s); using merit-order model", exc)
+                points = model.price_curve(wx.gti, wx.wind, wx.temperature)
+        else:
+            points = model.price_curve(wx.gti, wx.wind, wx.temperature)
     _cache.update({
         "ts": now,
         "points": points,
-        "provider": wx.provider,
+        "provider": provider,
         "resolution_min": wx.resolution_min,
     })
     if points:
@@ -60,7 +81,7 @@ def _refresh(force: bool = False) -> None:
         CUR_PRICE.set(nearest.price_eur_mwh)
         HORIZON_G.set(wx.horizon_hours())
         RES_G.set(wx.resolution_min)
-    log.info("refreshed: %d points, provider=%s, res=%dmin", len(points), wx.provider, wx.resolution_min)
+    log.info("refreshed: %d points, provider=%s, res=%dmin", len(points), provider, wx.resolution_min)
 
 
 def _nearest(points: list[model.PricePoint], at: float | None = None) -> model.PricePoint:
