@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Price forecast — ECO-VPP</title>
+  <meta name="description" content="Weather-driven 10-minute electricity price forecast. The <price-forecast> UI module, powered by Open-Meteo + the METOC Lagrangian nowcast." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="pills"><span class="pill">10-minute resolution</span><span class="pill">Weather-driven</span><span class="pill">METOC nowcast</span></div>
+    <h1>Price forecast.</h1>
+    <p class="lead">This is the user-facing weather → price module. It turns the high-resolution weather nowcast (Open-Meteo refined by the METOC Lagrangian platform) into a 10-minute electricity price curve, so residents and the VPP dispatcher can see when energy will be cheap or expensive. It runs on a browser-side model here; point <code>endpoint</code> at the <code>price-forecast</code> service for live data.</p>
+  </section>
+
+  <section>
+    <div class="row">
+      <div>
+        <price-forecast hours="6" refresh="60"></price-forecast>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Embed it</h3>
+          <p style="color:var(--muted);font-size:.93rem;margin:.4rem 0 .6rem">Two lines, no framework.</p>
+          <pre>&lt;script src="assets/price-forecast.js"&gt;&lt;/script&gt;
+&lt;price-forecast
+   endpoint="/api/v1/price/forecast"
+   hours="6" refresh="60"&gt;
+&lt;/price-forecast&gt;</pre>
+          <p style="color:var(--muted);font-size:.93rem;margin-top:.6rem">Drop <code>endpoint</code> and it runs the in-browser model (what you see on the left).</p>
+        </div>
+        <div class="card" style="margin-top:1rem">
+          <h3>Where the numbers come from</h3>
+          <p style="color:var(--muted);font-size:.93rem;line-height:1.6;margin:.4rem 0 0">
+            <strong>Weather</strong>: Open-Meteo 15-min NWP (irradiance, wind, temperature), refined to 10-min by the
+            <a href="https://github.com/DanBarbu/EcoVpp/tree/main/services/price-forecast">METOC Lagrangian nowcast adapter</a>.<br><br>
+            <strong>Price</strong>: a residual-load merit-order model — PV + wind generation vs temperature/time-of-day
+            demand → €/MWh. Every coefficient is calibratable.
+          </p>
+        </div>
+        <div class="card" style="margin-top:1rem">
+          <h3>It drives the VPP</h3>
+          <p style="color:var(--muted);font-size:.93rem;line-height:1.6;margin:.4rem 0 0">
+            The same curve feeds the <code>flexibility-engine</code>: cheap windows relax load limits, expensive windows
+            curtail EV charging and heat pumps — automatically, within 3 seconds.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How to read the chart</h2>
+    <div class="grid">
+      <div class="card"><h3 style="color:#34d399">Green bars</h3><p>Cheapest third of the horizon — good time to charge the EV, run the dishwasher, heat the water tank.</p></div>
+      <div class="card"><h3 style="color:#7c9cff">Blue bars</h3><p>Mid-range price. Normal operation.</p></div>
+      <div class="card"><h3 style="color:#f59e0b">Amber bars</h3><p>Most expensive third — the dispatcher curtails shiftable loads here.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="callout">
+      <h3>Wire it to live data</h3>
+      <p>Run the stack (<code>docker compose up -d</code>), and the <code>price-forecast</code> service serves the real curve at <code>/api/v1/price/forecast</code>. Set <code>METOC_NOWCAST=1</code> once the METOC Lagrangian code is in place for true 10-minute accuracy.</p>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+<script src="assets/price-forecast.js"></script>
+</body>
+</html>
