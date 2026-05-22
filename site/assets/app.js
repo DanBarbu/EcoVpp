@@ -5,6 +5,7 @@
     { href: '/features.html', label: 'Features' },
     { href: '/pilots.html', label: 'Pilots' },
     { href: '/about.html', label: 'About' },
+    { href: '/forecast.html', label: 'Price forecast' },
     { href: '/demo.html', label: 'Live demo' },
     { href: '/contact.html', label: 'Contact' },
   ];

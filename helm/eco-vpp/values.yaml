@@ -56,6 +56,12 @@ priceForecast:
   horizonHours: 6
   pvCapacityKw: 5000
   windCapacityKw: 2000
+  # EU day-ahead correlation + anchoring. Provide an ENTSO-E token to enable;
+  # below correlationThreshold the model anchors to the zone's real market price.
+  entsoeToken: ""
+  zone: "RO"               # EU bidding zone served (see services/price-forecast/zones.py)
+  roZoneEic: "10YRO-TEL------P"
+  correlationThreshold: "0.90"
   resources:
     limits: { cpu: 500m, memory: 256Mi }
     requests: { cpu: 50m, memory: 64Mi }
