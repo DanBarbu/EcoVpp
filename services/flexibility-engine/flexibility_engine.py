@@ -170,6 +170,7 @@ class Publisher:
             http.post(
                 f"{WEBHOOK_URL}/api/internal/incentive",
                 json={"price": payload["price_eur_kwh"], "signal": payload["signal"], "limit_pct": payload["limit_pct"]},
+                headers={"X-Ingest-Token": INGEST_TOKEN},
                 timeout=2.0,
             )
         except Exception as exc:  # noqa: BLE001

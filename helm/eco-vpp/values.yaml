@@ -31,6 +31,8 @@ mainflux:
 
 webhookReceiver:
   replicas: 2
+  env: "production"          # 'dev' relaxes token/CORS guards; 'production' fails closed
+  corsAllowOrigins: ""       # comma-separated dashboard origins, e.g. "https://eco-vpp.energy"
   service:
     type: ClusterIP
     port: 8000
@@ -110,8 +112,9 @@ forecast:
     azimuth: 180
 
 esp32:
+  # Non-secret device config only. The Wi-Fi password and ingest token are NOT
+  # stored here or in the ConfigMap — they are flashed per device (secrets.py).
   wifiSsid: ""
-  wifiPass: ""
   mqttBroker: ""
   deviceDid: "did:ethr:volta:0x000000"
 

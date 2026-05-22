@@ -34,6 +34,7 @@ services:
     build: ./services/webhook-receiver
     environment:
       DATABASE_URL: postgresql://eco:eco@postgres:5432/ecovpp
+      ECOVPP_ENV: dev          # relaxes token/CORS guards for local dev
       INGEST_TOKEN: dev-token
       LOG_LEVEL: INFO
     ports: ["8000:8000"]

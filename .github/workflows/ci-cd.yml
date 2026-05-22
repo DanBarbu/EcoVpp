@@ -104,7 +104,9 @@ jobs:
           severity: CRITICAL,HIGH
           format: sarif
           output: trivy-${{ matrix.name }}.sarif
-          exit-code: "0"
+          # Fail the build on fixable CRITICAL/HIGH CVEs (matches the documented
+          # policy). ignore-unfixed avoids blocking on un-patchable base-image CVEs.
+          exit-code: "1"
           ignore-unfixed: true
       - name: Upload Trivy SARIF
         if: always()
