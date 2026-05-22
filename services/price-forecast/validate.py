@@ -1,23 +1,20 @@
-"""Correlate the price model against OPCOM (RO day-ahead) and calibrate.
+"""Correlate the price model against real EU day-ahead markets and calibrate.
 
-Run where there is network egress and an ENTSO-E token:
+Run where there is network egress and an ENTSO-E token (free, from
+https://transparency.entsoe.eu):
 
-    export ENTSOE_TOKEN=...            # free, from transparency.entsoe.eu
-    python validate.py --days 14
+    export ENTSOE_TOKEN=...
+    python validate.py --zone RO --days 14          # Romania (OPCOM)
+    python validate.py --all --days 14              # every EU bidding zone
 
-or with a manually exported OPCOM CSV (timestamp,price_eur_mwh):
+For each zone it fetches the day-ahead price (ENTSO-E A44) and the matching
+Open-Meteo weather at the zone centroid, builds the model price series, and
+measures Pearson correlation. Per-zone result:
 
-    OPCOM_CSV=opcom_pzu.csv python validate.py --days 14
+  r >= threshold (default 0.90) -> calibration.<zone>.json mode=merit_order
+  r <  threshold                -> calibration.<zone>.json mode=anchored
 
-Behaviour
-  * Fetches OPCOM day-ahead prices and the matching Open-Meteo weather for the
-    backtest window, builds the model price series, and reports Pearson r.
-  * If r >= threshold (default 0.90): writes a merit-order calibration (level
-    refit) and reports PASS.
-  * If r < threshold: writes an OPCOM-ANCHORED calibration (and refit merit-order
-    coefficients as the offline fallback) and reports that anchoring is enabled.
-
-The price-forecast service and model.py pick up calibration.json automatically.
+The RO CSV fallback (OPCOM_CSV) still works for --zone RO with no token.
 """
 from __future__ import annotations
 
@@ -28,65 +25,76 @@ from datetime import datetime, timedelta, timezone
 import httpx
 
 import calibration
+import markets
 import model
 import opcom
 import weather
+import zones
 
 
-def _weather_window(hours: int, client: httpx.Client) -> weather.WeatherForecast:
-    # weather.fetch pulls a forward window; for backtesting against OPCOM you
-    # would point SITE_LAT/LON at the RO zone centroid. Open-Meteo also serves
-    # past days via its archive API; see README for the archive variant.
-    return weather.fetch(horizon_hours=hours, client=client)
+def _opcom_for_zone(zone_code: str, days: int, client: httpx.Client) -> list[tuple[int, float]]:
+    series: list[tuple[int, float]] = []
+    z = zones.get(zone_code)
+    for d in range(days):
+        day = datetime.now(tz=timezone.utc) - timedelta(days=d + 1)
+        if zone_code == "RO":
+            series += opcom.day_ahead(day, client=client)
+        else:
+            series += markets.day_ahead(z.eic, day=day, client=client)
+    return series
+
+
+def _calibrate_zone(zone_code: str, days: int, threshold: float,
+                    client: httpx.Client, write: bool) -> calibration.Calibration | None:
+    z = zones.get(zone_code)
+    try:
+        market = _opcom_for_zone(zone_code, days, client)
+    except Exception as exc:  # noqa: BLE001
+        print(f"[{zone_code}] ERROR fetching day-ahead: {exc}", file=sys.stderr)
+        return None
+    if not market:
+        print(f"[{zone_code}] no prices returned", file=sys.stderr)
+        return None
+
+    wx = weather.fetch(horizon_hours=days * 24, client=client, lat=z.lat, lon=z.lon)
+    pts = model.price_curve(wx.gti, wx.wind, wx.temperature)
+    model_price = [(p.ts, p.price_eur_mwh) for p in pts]
+    residual = [(p.ts, p.residual_load_kw) for p in pts]
+
+    cal = calibration.evaluate(model_price, market, residual_load=residual, threshold=threshold)
+    status = "PASS" if cal.correlation >= threshold else "ANCHOR"
+    print(f"[{zone_code}] {z.name:22s} r={cal.correlation:+.3f} n={cal.n:4d} "
+          f"-> {cal.mode:11s} [{status}]")
+    if write:
+        calibration.save(cal, calibration.path_for(zone_code))
+    return cal
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--days", type=int, default=7, help="backtest window length")
+    ap.add_argument("--zone", default="RO", help="zone code (see zones.py)")
+    ap.add_argument("--all", action="store_true", help="calibrate every EU zone")
+    ap.add_argument("--days", type=int, default=7)
     ap.add_argument("--threshold", type=float, default=calibration.CORRELATION_THRESHOLD)
-    ap.add_argument("--dry-run", action="store_true", help="report only, don't write calibration.json")
+    ap.add_argument("--dry-run", action="store_true", help="report only; don't write files")
     args = ap.parse_args()
 
+    codes = zones.all_codes() if args.all else [args.zone]
+    results: dict[str, float] = {}
     with httpx.Client(timeout=30.0) as client:
-        # 1. OPCOM actuals
-        opcom_series: opcom.Series = []
-        try:
-            for d in range(args.days):
-                day = datetime.now(tz=timezone.utc) - timedelta(days=d + 1)
-                opcom_series += opcom.day_ahead(day, client=client)
-        except Exception as exc:  # noqa: BLE001
-            print(f"ERROR fetching OPCOM/ENTSO-E data: {exc}", file=sys.stderr)
-            print("Provide ENTSOE_TOKEN or OPCOM_CSV. See module docstring.", file=sys.stderr)
-            return 2
-        if not opcom_series:
-            print("No OPCOM prices returned for the window.", file=sys.stderr)
-            return 2
+        for code in codes:
+            cal = _calibrate_zone(code, args.days, args.threshold, client, write=not args.dry_run)
+            if cal:
+                results[code] = cal.correlation
 
-        # 2. Weather + model series over the same span
-        wx = _weather_window(hours=args.days * 24, client=client)
-        model_points = model.price_curve(wx.gti, wx.wind, wx.temperature)
+    if not results:
+        print("No zones calibrated (check ENTSOE_TOKEN / network).", file=sys.stderr)
+        return 2
 
-    model_price = [(p.ts, p.price_eur_mwh) for p in model_points]
-    residual = [(p.ts, p.residual_load_kw) for p in model_points]
-
-    cal = calibration.evaluate(model_price, opcom_series, residual_load=residual, threshold=args.threshold)
-
-    print(f"OPCOM points: {len(opcom_series)} | aligned hours: {cal.n}")
-    print(f"Pearson correlation (model vs OPCOM): {cal.correlation:.3f}")
-    print(f"Threshold: {cal.threshold:.2f}")
-    if cal.correlation >= cal.threshold:
-        print(f"PASS — correlation ≥ {cal.threshold:.0%}. Merit-order model retained "
-              f"(level refit: p_zero={cal.p_zero}, slope={cal.slope}).")
-    else:
-        print(f"BELOW THRESHOLD — switching to OPCOM-ANCHORED mode. The day-ahead "
-              f"baseline will track OPCOM; weather/METOC shapes the 10-min curve. "
-              f"Offline merit-order fallback refit: p_zero={cal.p_zero}, slope={cal.slope}.")
-
-    if args.dry_run:
-        print("(dry-run: calibration.json not written)")
-    else:
-        calibration.save(cal)
-        print(f"Wrote {calibration.CALIBRATION_FILE} (mode={cal.mode}).")
+    anchored = sum(1 for c in results.values() if c < args.threshold)
+    print(f"\nSummary: {len(results)} zones, mean r="
+          f"{sum(results.values())/len(results):+.3f}, "
+          f"{anchored} below {args.threshold:.0%} -> anchored to market price.")
     return 0
 
 

@@ -37,16 +37,21 @@ PRICE_AT_ZERO_RESIDUAL = float(os.getenv("PRICE_AT_ZERO_EUR_MWH", "45"))
 PRICE_CURVE_SLOPE = float(os.getenv("PRICE_SLOPE_EUR_PER_MW", "22"))  # per MW of residual load
 PRICE_CAP = float(os.getenv("PRICE_CAP_EUR_MWH", "400"))
 
-# Apply a persisted OPCOM calibration if present (written by validate.py).
-# This recalibrates the merit-order curve to the RO market without code edits.
+def apply_calibration(cal) -> None:
+    """Override the merit-order level/slope from a Calibration object."""
+    global PRICE_AT_ZERO_RESIDUAL, PRICE_CURVE_SLOPE  # noqa: PLW0603
+    if cal is not None:
+        PRICE_AT_ZERO_RESIDUAL = cal.p_zero
+        PRICE_CURVE_SLOPE = cal.slope
+
+
+# Apply a persisted market calibration if present (written by validate.py).
+# Recalibrates the merit-order curve to the market without code edits.
 try:
     import calibration as _cal  # noqa: E402
-    _c = _cal.load()
-    if _c is not None:
-        PRICE_AT_ZERO_RESIDUAL = _c.p_zero
-        PRICE_CURVE_SLOPE = _c.slope
+    apply_calibration(_cal.load())
 except Exception:  # noqa: BLE001 - calibration is optional
-    _c = None
+    pass
 
 
 @dataclass

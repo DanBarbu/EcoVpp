@@ -23,11 +23,27 @@ from fastapi.middleware.cors import CORSMiddleware
 from prometheus_client import CONTENT_TYPE_LATEST, Gauge, generate_latest
 from starlette.responses import Response
 
+import calibration
+import markets
 import model
 import weather
+import zones
 
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
 log = logging.getLogger("price-forecast")
+
+# Which EU bidding zone this instance serves (e.g. RO, DE_LU, ES). Empty = the
+# default single-site config (SITE_LAT/LON + calibration.json).
+ZONE = os.getenv("ZONE", "")
+_zone = None
+if ZONE:
+    try:
+        _zone = zones.get(ZONE)
+        model.apply_calibration(calibration.load(calibration.path_for(ZONE)))
+        log.info("serving zone %s (%s)", _zone.code, _zone.name)
+    except Exception as exc:  # noqa: BLE001
+        log.warning("zone '%s' setup failed: %s", ZONE, exc)
+        _zone = None
 
 HORIZON_HOURS = int(os.getenv("PRICE_HORIZON_HOURS", "6"))
 CACHE_TTL_S = int(os.getenv("PRICE_CACHE_TTL_S", "300"))
@@ -42,31 +58,29 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 _cache: dict[str, object] = {"ts": 0.0, "points": [], "provider": "", "resolution_min": 0}
 
 
-def _opcom_anchor_enabled() -> bool:
-    """Anchor to OPCOM when a calibration says so (correlation was < threshold)."""
-    try:
-        import calibration
-        cal = calibration.load()
-        return bool(cal and cal.mode == "anchored")
-    except Exception:  # noqa: BLE001
-        return False
+def _anchor_calibration():
+    """Return the active calibration if it selected anchored mode, else None."""
+    cal = calibration.load(calibration.path_for(ZONE) if ZONE else calibration.CALIBRATION_FILE)
+    return cal if (cal and cal.mode == "anchored") else None
 
 
 def _refresh(force: bool = False) -> None:
     now = time.time()
     if not force and (now - float(_cache["ts"])) < CACHE_TTL_S and _cache["points"]:
         return
+    lat = _zone.lat if _zone else None
+    lon = _zone.lon if _zone else None
     with httpx.Client(timeout=15.0) as c:
-        wx = weather.fetch(horizon_hours=HORIZON_HOURS, client=c)
+        wx = weather.fetch(horizon_hours=HORIZON_HOURS, client=c, lat=lat, lon=lon)
         provider = wx.provider
-        if _opcom_anchor_enabled():
+        if _anchor_calibration() is not None:
             try:
-                import opcom
-                op = opcom.day_ahead(client=c)
+                eic = _zone.eic if _zone else os.getenv("RO_ZONE_EIC", "10YRO-TEL------P")
+                op = markets.day_ahead(eic, client=c)
                 points = model.price_curve_anchored(op, wx.gti, wx.wind, wx.temperature)
-                provider = f"{wx.provider}+opcom-anchored"
+                provider = f"{wx.provider}+market-anchored"
             except Exception as exc:  # noqa: BLE001 - degrade gracefully to merit order
-                log.warning("OPCOM anchor unavailable (%s); using merit-order model", exc)
+                log.warning("market anchor unavailable (%s); using merit-order model", exc)
                 points = model.price_curve(wx.gti, wx.wind, wx.temperature)
         else:
             points = model.price_curve(wx.gti, wx.wind, wx.temperature)

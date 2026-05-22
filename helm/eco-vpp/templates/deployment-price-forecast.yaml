@@ -44,6 +44,8 @@ spec:
               value: {{ .Values.priceForecast.windCapacityKw | quote }}
             - name: ENTSOE_TOKEN
               value: {{ .Values.priceForecast.entsoeToken | quote }}
+            - name: ZONE
+              value: {{ .Values.priceForecast.zone | quote }}
             - name: RO_ZONE_EIC
               value: {{ .Values.priceForecast.roZoneEic | quote }}
             - name: CORRELATION_THRESHOLD

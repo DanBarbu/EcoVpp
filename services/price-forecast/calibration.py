@@ -114,6 +114,17 @@ def evaluate(model_price: Series, opcom_price: Series,
     )
 
 
+CALIBRATION_DIR = os.getenv("CALIBRATION_DIR", ".")
+
+
+def path_for(zone: str | None = None) -> str:
+    """Calibration file path. Default zone uses CALIBRATION_FILE; named zones
+    use calibration.<zone>.json under CALIBRATION_DIR."""
+    if not zone:
+        return CALIBRATION_FILE
+    return os.path.join(CALIBRATION_DIR, f"calibration.{zone}.json")
+
+
 def save(cal: Calibration, path: str = CALIBRATION_FILE) -> None:
     with open(path, "w") as fh:
         json.dump(asdict(cal), fh, indent=2)

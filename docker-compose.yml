@@ -67,8 +67,8 @@ services:
       NOWCAST_STEP_MIN: 10
       METOC_NOWCAST: "0"        # set 1 once the METOC Lagrangian code is wired in
       PRICE_HORIZON_HOURS: 6
-      ENTSOE_TOKEN: ""          # set to enable OPCOM (RO day-ahead) correlation/anchoring
-      RO_ZONE_EIC: "10YRO-TEL------P"
+      ENTSOE_TOKEN: ""          # set to enable EU day-ahead correlation/anchoring
+      ZONE: "RO"                # EU bidding zone this instance serves (see zones.py)
       CORRELATION_THRESHOLD: "0.90"
       LOG_LEVEL: INFO
     ports: ["8003:8003"]

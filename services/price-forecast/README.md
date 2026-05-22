@@ -90,18 +90,51 @@ type A44, RO bidding zone `10YRO-TEL------P` — the canonical machine-readable
 carrier of the OPCOM day-ahead price. The OPCOM website itself has no clean
 public API, hence ENTSO-E (or a manual CSV) as the source.
 
+### All EU bidding zones
+
+The same machinery works for every EU day-ahead market — ENTSO-E carries them
+all. `zones.py` lists the EU-27 principal bidding zones (EIC + weather centroid).
+
+```bash
+export ENTSOE_TOKEN=xxxxxxxx
+python validate.py --zone DE_LU --days 14   # one zone
+python validate.py --all --days 14          # every EU zone
+```
+
+`--all` writes one `calibration.<ZONE>.json` per zone (under `CALIBRATION_DIR`,
+default `calibrations/`) and prints a per-zone correlation table plus a summary
+of how many zones fell below threshold and were anchored to their market price.
+
+Because Pearson correlation is scale-invariant and the OLS step absorbs linear
+capacity scaling, the same default merit-order model is correlated against each
+market without per-country capacity tuning — the **anchoring** is what lifts
+correlation, identically for every country.
+
+A service instance serves one zone via `ZONE` (e.g. `ZONE=ES`): it loads that
+zone's calibration, pulls weather at the zone centroid, and anchors to that
+zone's market when calibrated to do so.
+
+### Weekly auto-recalibration
+
+`.github/workflows/price-calibration.yml` runs `validate.py --all` every Monday
+(and on demand), then commits the refreshed `calibration.<ZONE>.json` files back
+to the repo. Add the repo secret **`ENTSOE_TOKEN`** to enable it; without the
+secret the job no-ops.
+
 ### Key calibration env vars
 
 | Var | Default | Meaning |
 |-----|---------|---------|
-| `ENTSOE_TOKEN` | — | ENTSO-E API token (required for live OPCOM fetch) |
-| `OPCOM_CSV` | — | path to a `timestamp,price_eur_mwh` CSV fallback |
-| `RO_ZONE_EIC` | `10YRO-TEL------P` | RO bidding-zone EIC code |
+| `ENTSOE_TOKEN` | — | ENTSO-E API token (required for live fetch, all zones) |
+| `ZONE` | — | EU bidding zone this service instance serves (see `zones.py`) |
+| `OPCOM_CSV` | — | RO-only `timestamp,price_eur_mwh` CSV fallback |
 | `CORRELATION_THRESHOLD` | `0.90` | switch to anchored mode below this |
-| `CALIBRATION_FILE` | `calibration.json` | where the fitted calibration is stored |
+| `CALIBRATION_DIR` | `.` | directory holding `calibration.<zone>.json` files |
+| `CALIBRATION_FILE` | `calibration.json` | default (zone-less) calibration path |
 
 > Note: a live correlation run needs outbound network + the ENTSO-E token, so it
-> must run on your machine or in the cluster — not in a no-egress CI sandbox.
+> must run on your machine, in the cluster, or in the scheduled workflow — not in
+> a no-egress build sandbox.
 
 ## Test
 

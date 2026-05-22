@@ -49,13 +49,14 @@ def _to_series(times: list[str], values: list[float | None]) -> Series:
     return out
 
 
-def fetch(horizon_hours: int = 6, client: httpx.Client | None = None) -> WeatherForecast:
+def fetch(horizon_hours: int = 6, client: httpx.Client | None = None,
+          lat: float | None = None, lon: float | None = None) -> WeatherForecast:
     owned = client is None
     client = client or httpx.Client(timeout=10.0)
     try:
         params = {
-            "latitude": LAT,
-            "longitude": LON,
+            "latitude": LAT if lat is None else lat,
+            "longitude": LON if lon is None else lon,
             "minutely_15": "global_tilted_irradiance,wind_speed_10m,temperature_2m",
             "tilt": PANEL_TILT,
             "azimuth": PANEL_AZIMUTH,
