@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service: [webhook-receiver, flexibility-engine, settlement, red-ii-allocator, forecast]
+        service: [webhook-receiver, flexibility-engine, settlement, red-ii-allocator, forecast, price-forecast]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -66,6 +66,8 @@ jobs:
             context: services/red-ii-allocator
           - name: forecast
             context: services/forecast
+          - name: price-forecast
+            context: services/price-forecast
           - name: dashboard
             context: dashboard
     steps:

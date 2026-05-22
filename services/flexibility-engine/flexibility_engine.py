@@ -32,6 +32,10 @@ FLEXMEASURES_URL = os.getenv("FLEXMEASURES_URL", "http://flexmeasures:5000")
 FLEXMEASURES_TOKEN = os.getenv("FLEXMEASURES_TOKEN", "")
 FLEXMEASURES_SENSOR_ID = int(os.getenv("FLEXMEASURES_SENSOR_ID", "1"))
 
+# Optional ECO-VPP price-forecast service (weather + METOC nowcast driven).
+# When set, it takes priority over FlexMeasures and the synthetic fallback.
+PRICE_FORECAST_URL = os.getenv("PRICE_FORECAST_URL", "")
+
 WEBHOOK_URL = os.getenv("WEBHOOK_URL", "http://webhook-receiver:8000")
 INGEST_TOKEN = os.getenv("INGEST_TOKEN", "dev-token")
 
@@ -66,12 +70,31 @@ class GridSignal:
         return (self.price_eur_mwh - PRICE_LOW) / (PRICE_HIGH - PRICE_LOW)
 
 
-def fetch_signal(client: httpx.Client) -> GridSignal | None:
-    """Pull the latest beliefs from FlexMeasures.
+def fetch_from_price_forecast(client: httpx.Client) -> GridSignal | None:
+    """Pull the next 10-minute price point from the ECO-VPP price-forecast
+    service (weather + METOC Lagrangian nowcast). Highest-priority source."""
+    if not PRICE_FORECAST_URL:
+        return None
+    try:
+        resp = client.get(f"{PRICE_FORECAST_URL}/api/v1/price/next", params={"minutes": 10}, timeout=3.0)
+        resp.raise_for_status()
+        data = resp.json()
+        if "price_eur_mwh" not in data:
+            return None
+        ts = datetime.fromisoformat(data["timestamp"]) if "timestamp" in data else datetime.now(tz=timezone.utc)
+        return GridSignal(price_eur_mwh=float(data["price_eur_mwh"]), timestamp=ts)
+    except Exception as exc:  # noqa: BLE001
+        log.warning("price-forecast fetch failed: %s", exc)
+        return None
 
-    Falls back to a synthetic sinusoid in dev mode (no token configured) so the
-    full pipeline stays exercisable without a live FlexMeasures install.
-    """
+
+def fetch_signal(client: httpx.Client) -> GridSignal | None:
+    """Resolve the price signal in priority order: price-forecast service →
+    FlexMeasures → synthetic dev fallback (so the pipeline always runs)."""
+    pf = fetch_from_price_forecast(client)
+    if pf is not None:
+        return pf
+
     if not FLEXMEASURES_TOKEN:
         # Dev fallback: oscillate between 30 and 220 EUR/MWh on a 10-minute cycle.
         now = datetime.now(tz=timezone.utc)

@@ -53,4 +53,8 @@ spec:
               value: {{ .Values.flexibilityEngine.priceHigh | quote }}
             - name: METRICS_PORT
               value: {{ .Values.flexibilityEngine.metricsPort | quote }}
+            {{- if .Values.priceForecast.enabled }}
+            - name: PRICE_FORECAST_URL
+              value: "http://{{ include "eco-vpp.fullname" . }}-price-forecast:8003"
+            {{- end }}
           resources: {{- toYaml .Values.flexibilityEngine.resources | nindent 12 }}

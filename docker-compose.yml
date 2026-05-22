@@ -51,11 +51,24 @@ services:
       MQTT_LOAD_TOPIC: ecovpp/commands/load_limit
       POLL_INTERVAL_S: 5
       FLEXMEASURES_TOKEN: ""    # empty = dev fallback (synthetic price wave)
+      PRICE_FORECAST_URL: http://price-forecast:8003   # weather+METOC price source
       LOG_LEVEL: INFO
     ports: ["8001:8001"]
     depends_on:
       - webhook-receiver
       - mainflux-mqtt
+      - price-forecast
+
+  price-forecast:
+    build: ./services/price-forecast
+    environment:
+      SITE_LAT: "44.4268"
+      SITE_LON: "26.1025"
+      NOWCAST_STEP_MIN: 10
+      METOC_NOWCAST: "0"        # set 1 once the METOC Lagrangian code is wired in
+      PRICE_HORIZON_HOURS: 6
+      LOG_LEVEL: INFO
+    ports: ["8003:8003"]
 
   red-ii-allocator:
     build: ./services/red-ii-allocator
