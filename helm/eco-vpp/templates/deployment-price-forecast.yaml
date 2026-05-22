@@ -42,6 +42,8 @@ spec:
               value: {{ .Values.priceForecast.pvCapacityKw | quote }}
             - name: WIND_CAPACITY_KW
               value: {{ .Values.priceForecast.windCapacityKw | quote }}
+            - name: PRICE_SOURCE
+              value: {{ .Values.priceForecast.priceSource | quote }}
             - name: ENTSOE_TOKEN
               value: {{ .Values.priceForecast.entsoeToken | quote }}
             - name: ZONE

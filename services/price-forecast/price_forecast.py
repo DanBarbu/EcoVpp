@@ -24,6 +24,7 @@ from prometheus_client import CONTENT_TYPE_LATEST, Gauge, generate_latest
 from starlette.responses import Response
 
 import calibration
+import energycharts
 import markets
 import model
 import weather
@@ -31,6 +32,10 @@ import zones
 
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
 log = logging.getLogger("price-forecast")
+
+# Market data source for anchoring: "energycharts" (token-free, default) or
+# "entsoe" (needs ENTSOE_TOKEN).
+PRICE_SOURCE = os.getenv("PRICE_SOURCE", "energycharts")
 
 # Which EU bidding zone this instance serves (e.g. RO, DE_LU, ES). Empty = the
 # default single-site config (SITE_LAT/LON + calibration.json).
@@ -64,6 +69,16 @@ def _anchor_calibration():
     return cal if (cal and cal.mode == "anchored") else None
 
 
+def _fetch_market(client):
+    """Fetch the day-ahead price series for the served zone from the configured
+    source (token-free Energy-Charts by default; ENTSO-E if PRICE_SOURCE=entsoe)."""
+    if PRICE_SOURCE == "entsoe":
+        eic = _zone.eic if _zone else os.getenv("RO_ZONE_EIC", "10YRO-TEL------P")
+        return markets.day_ahead(eic, client=client)
+    bzn = _zone.ec if _zone else "RO"
+    return energycharts.window(bzn, days=2, client=client)
+
+
 def _refresh(force: bool = False) -> None:
     now = time.time()
     if not force and (now - float(_cache["ts"])) < CACHE_TTL_S and _cache["points"]:
@@ -75,10 +90,9 @@ def _refresh(force: bool = False) -> None:
         provider = wx.provider
         if _anchor_calibration() is not None:
             try:
-                eic = _zone.eic if _zone else os.getenv("RO_ZONE_EIC", "10YRO-TEL------P")
-                op = markets.day_ahead(eic, client=c)
+                op = _fetch_market(c)
                 points = model.price_curve_anchored(op, wx.gti, wx.wind, wx.temperature)
-                provider = f"{wx.provider}+market-anchored"
+                provider = f"{wx.provider}+{PRICE_SOURCE}-anchored"
             except Exception as exc:  # noqa: BLE001 - degrade gracefully to merit order
                 log.warning("market anchor unavailable (%s); using merit-order model", exc)
                 points = model.price_curve(wx.gti, wx.wind, wx.temperature)

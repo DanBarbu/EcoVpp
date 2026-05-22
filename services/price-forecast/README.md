@@ -60,46 +60,47 @@ The contract is a list of `(epoch_seconds, value)` points in native units.
 | `PV_CAPACITY_KW`/`WIND_CAPACITY_KW` | 5000 / 2000 | installed renewable capacity |
 | `PRICE_*` | see `model.py` | merit-order curve calibration |
 
-## Correlation check & calibration against OPCOM (Romania)
+## Correlation check & calibration against real market prices
 
-The pure-weather merit-order model is a baseline; real RO day-ahead prices
-(gas coupling, hydro, Cernavodă nuclear, RO–HU/BG/RS cross-border flows) won't
-correlate strongly with it. `validate.py` measures the correlation against OPCOM
-and adjusts the algorithm when it's below 90%.
+The pure-weather merit-order model is a baseline; real day-ahead prices (gas
+coupling, hydro, nuclear, cross-border flows) won't correlate strongly with it.
+`validate.py` measures the Pearson correlation against the real market price and
+adjusts the algorithm when it's below 90%.
+
+### Token-free (default) — Energy-Charts / Fraunhofer ISE
+
+No registration, no token, no secret. The default `--source energycharts` uses
+the public `https://api.energy-charts.info/price` API:
 
 ```bash
-# free token from https://transparency.entsoe.eu (My Account → API access)
-export ENTSOE_TOKEN=xxxxxxxx
-python validate.py --days 14
-# …or use a manually exported OPCOM PZU report:
-OPCOM_CSV=opcom_pzu.csv python validate.py --days 14
+python validate.py --zone RO --days 14       # Romania, token-free
+python validate.py --all --days 14           # every EU zone, token-free
 ```
+
+### Optional — ENTSO-E (official source, needs a token)
+
+```bash
+export ENTSOE_TOKEN=xxxxxxxx                 # https://transparency.entsoe.eu
+python validate.py --all --days 14 --source entsoe
+# Romania also accepts a manual OPCOM PZU export:
+OPCOM_CSV=opcom_pzu.csv python validate.py --zone RO --source entsoe
+```
+
+### What the calibration does (same for every country)
 
 - **r ≥ 0.90** → keeps the merit-order model, refits its level (`p_zero`,
-  `slope`) to OPCOM, writes `calibration.json` with `mode: merit_order`.
-- **r < 0.90** → writes `mode: anchored`: the service then uses
-  `price_curve_anchored()`, where the **hourly day-ahead baseline is OPCOM** and
-  the weather/METOC nowcast only shapes it to 10-minute resolution. This makes
-  the delivered forecast track OPCOM by construction while keeping sub-hourly
-  value. The refit merit-order coefficients remain as the offline fallback for
-  real-time beyond the day-ahead horizon.
+  `slope`) to the market, writes `calibration.<zone>.json` mode `merit_order`.
+- **r < 0.90** → writes mode `anchored`: the service then uses
+  `price_curve_anchored()`, where the **hourly day-ahead baseline IS the real
+  market price** and the weather/METOC nowcast only shapes it to 10-minute
+  resolution. The forecast tracks the market by construction while keeping
+  sub-hourly value. Refit merit-order coefficients remain as the offline
+  fallback beyond the day-ahead horizon.
 
-`model.py` and the service load `calibration.json` automatically (path via
-`CALIBRATION_FILE`). Data source: **ENTSO-E Transparency Platform**, document
-type A44, RO bidding zone `10YRO-TEL------P` — the canonical machine-readable
-carrier of the OPCOM day-ahead price. The OPCOM website itself has no clean
-public API, hence ENTSO-E (or a manual CSV) as the source.
-
-### All EU bidding zones
-
-The same machinery works for every EU day-ahead market — ENTSO-E carries them
-all. `zones.py` lists the EU-27 principal bidding zones (EIC + weather centroid).
-
-```bash
-export ENTSOE_TOKEN=xxxxxxxx
-python validate.py --zone DE_LU --days 14   # one zone
-python validate.py --all --days 14          # every EU zone
-```
+`zones.py` lists EU-27 principal bidding zones with both an Energy-Charts code
+(`ec`, token-free source) and an ENTSO-E EIC (`eic`, official source). Isolated
+islands (CY, MT) have no Energy-Charts coupling and need `--source entsoe`.
+`model.py` and the service auto-load the per-zone calibration.
 
 `--all` writes one `calibration.<ZONE>.json` per zone (under `CALIBRATION_DIR`,
 default `calibrations/`) and prints a per-zone correlation table plus a summary
@@ -117,24 +118,26 @@ zone's market when calibrated to do so.
 ### Weekly auto-recalibration
 
 `.github/workflows/price-calibration.yml` runs `validate.py --all` every Monday
-(and on demand), then commits the refreshed `calibration.<ZONE>.json` files back
-to the repo. Add the repo secret **`ENTSOE_TOKEN`** to enable it; without the
-secret the job no-ops.
+(and on demand) and commits the refreshed `calibration.<ZONE>.json` files back
+to the repo. It uses the **token-free Energy-Charts source by default — no
+secret required**, so it works the moment Actions is enabled. Set the dispatch
+input `source=entsoe` (with an `ENTSOE_TOKEN` secret) to use the official feed.
 
 ### Key calibration env vars
 
 | Var | Default | Meaning |
 |-----|---------|---------|
-| `ENTSOE_TOKEN` | — | ENTSO-E API token (required for live fetch, all zones) |
+| `PRICE_SOURCE` | `energycharts` | market source for anchoring: `energycharts` (token-free) or `entsoe` |
+| `ENTSOE_TOKEN` | — | ENTSO-E API token (only for `PRICE_SOURCE=entsoe`) |
 | `ZONE` | — | EU bidding zone this service instance serves (see `zones.py`) |
 | `OPCOM_CSV` | — | RO-only `timestamp,price_eur_mwh` CSV fallback |
 | `CORRELATION_THRESHOLD` | `0.90` | switch to anchored mode below this |
 | `CALIBRATION_DIR` | `.` | directory holding `calibration.<zone>.json` files |
 | `CALIBRATION_FILE` | `calibration.json` | default (zone-less) calibration path |
 
-> Note: a live correlation run needs outbound network + the ENTSO-E token, so it
-> must run on your machine, in the cluster, or in the scheduled workflow — not in
-> a no-egress build sandbox.
+> Note: a live correlation run needs outbound network (Energy-Charts is
+> token-free), so it runs on your machine, in the cluster, or in the scheduled
+> workflow — not in a no-egress build sandbox.
 
 ## Test
 

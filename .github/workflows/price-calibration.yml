@@ -1,10 +1,12 @@
 name: Price calibration (EU markets)
 
 # Weekly correlation check of the price-forecast model against real EU
-# day-ahead prices (ENTSO-E). Re-fits / re-anchors each bidding zone and
-# commits the updated calibration.<zone>.json files back to the repo.
+# day-ahead prices. Re-fits / re-anchors each bidding zone and commits the
+# updated calibration.<zone>.json files back to the repo.
 #
-# Requires repo secret ENTSOE_TOKEN (free: https://transparency.entsoe.eu).
+# Default source is Energy-Charts (Fraunhofer ISE) — TOKEN-FREE, no secret
+# needed. Optionally set source=entsoe with the ENTSOE_TOKEN secret for the
+# official ENTSO-E feed.
 
 on:
   schedule:
@@ -19,6 +21,12 @@ on:
         description: "Backtest window (days)"
         required: false
         default: "14"
+      source:
+        description: "Market data source"
+        required: false
+        default: "energycharts"
+        type: choice
+        options: [energycharts, entsoe]
 
 permissions:
   contents: write
@@ -41,23 +49,20 @@ jobs:
           ENTSOE_TOKEN: ${{ secrets.ENTSOE_TOKEN }}
           CALIBRATION_DIR: calibrations
         run: |
-          if [ -z "$ENTSOE_TOKEN" ]; then
-            echo "::warning::ENTSOE_TOKEN not set — skipping live calibration."
-            exit 0
-          fi
           cd services/price-forecast
           mkdir -p calibrations
+          SOURCE="${{ github.event.inputs.source }}"; SOURCE="${SOURCE:-energycharts}"
+          if [ "$SOURCE" = "entsoe" ] && [ -z "$ENTSOE_TOKEN" ]; then
+            echo "::warning::source=entsoe but ENTSOE_TOKEN not set — falling back to energycharts."
+            SOURCE="energycharts"
+          fi
           ZONE_ARG="--all"
           if [ -n "${{ github.event.inputs.zone }}" ]; then ZONE_ARG="--zone ${{ github.event.inputs.zone }}"; fi
           DAYS="${{ github.event.inputs.days }}"; DAYS="${DAYS:-14}"
-          PYTHONPATH=. python validate.py $ZONE_ARG --days "$DAYS" | tee calibrations/REPORT.txt
+          PYTHONPATH=. python validate.py $ZONE_ARG --days "$DAYS" --source "$SOURCE" | tee calibrations/REPORT.txt
 
       - name: Commit updated calibrations
-        if: ${{ env.HAVE_TOKEN != 'false' }}
-        env:
-          ENTSOE_TOKEN: ${{ secrets.ENTSOE_TOKEN }}
         run: |
-          [ -z "$ENTSOE_TOKEN" ] && exit 0
           cd services/price-forecast
           if [ -n "$(git status --porcelain calibrations)" ]; then
             git config user.name "github-actions[bot]"
