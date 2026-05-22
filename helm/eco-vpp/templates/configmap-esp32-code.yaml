@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-esp32-code
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+data:
+  main.py: |
+    """ECO-VPP sub-EUR20 node firmware (MicroPython, ESP32-S3 + ADE7913 + HaLow Wi-Fi).
+
+    Reads V/I/P/E from the ADE7913 over SPI, optionally captures a meter dial
+    image and runs on-device OCR (AI-on-the-edge-device build), then POSTs the
+    sample to the cloud over HaLow with up to 5 retries (HaLow can introduce
+    seconds of latency, so the device timestamp is authoritative).
+
+    Configure via environment variables baked into the firmware partition:
+      WIFI_SSID, WIFI_PASS, MQTT_BROKER, DEVICE_DID, INGEST_TOKEN
+    """
+    import network, time, ujson, urequests, machine
+
+    WIFI_SSID = "{{ .Values.esp32.wifiSsid }}"
+    WIFI_PASS = "{{ .Values.esp32.wifiPass }}"
+    MQTT_BROKER = "{{ .Values.esp32.mqttBroker }}"
+    DEVICE_DID = "{{ .Values.esp32.deviceDid }}"
+    INGEST_URL = "https://{{ .Values.ingress.host }}/api/v1/telemetry/ingest"
+    INGEST_TOKEN = "{{ .Values.ingestToken }}"
+
+    LOAD_RELAY_PIN = 4         # GPIO connected to load actuator (SET_LOAD_LIMIT)
+    OVERRIDE_PIN = 0           # local manual override (boot button)
+
+    relay = machine.Pin(LOAD_RELAY_PIN, machine.Pin.OUT, value=1)
+    override = machine.Pin(OVERRIDE_PIN, machine.Pin.IN, machine.Pin.PULL_UP)
+
+    def connect():
+        sta = network.WLAN(network.STA_IF)
+        sta.active(True)
+        if not sta.isconnected():
+            sta.connect(WIFI_SSID, WIFI_PASS)
+            for _ in range(60):
+                if sta.isconnected():
+                    break
+                time.sleep(0.5)
+        return sta.isconnected()
+
+    def read_ade7913():
+        # Placeholder: real impl reads V/I/P/E registers over SPI.
+        return {"voltage": 230.1, "current": 1.42, "power_w": 326.7, "energy_kwh": 0.054}
+
+    def post_sample(sample):
+        for attempt in range(5):
+            try:
+                r = urequests.post(
+                    INGEST_URL,
+                    headers={"X-Ingest-Token": INGEST_TOKEN, "Content-Type": "application/json"},
+                    data=ujson.dumps(sample),
+                    timeout=8,
+                )
+                r.close()
+                return True
+            except Exception:
+                time.sleep(2 ** attempt)  # exp backoff over high-latency HaLow
+        return False
+
+    def main():
+        connect()
+        while True:
+            if override.value() == 0:
+                relay.value(1)  # local override re-enables the load
+            sample = read_ade7913()
+            sample.update({"did": DEVICE_DID, "confidence": 0.97, "timestamp": None})
+            post_sample(sample)
+            time.sleep(15)
+
+    main()

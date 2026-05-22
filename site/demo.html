@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Live demo — ECO-VPP</title>
+  <meta name="description" content="Interactive ECO-VPP dashboard demo. Mocked data — wire to the real webhook-receiver via fetch()." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap" id="demo-root">
+  <section class="hero">
+    <div class="pills"><span class="pill">Mocked data</span><span class="pill">Updates every 2 s</span><span class="pill">No backend required</span></div>
+    <h1>Live operator dashboard.</h1>
+    <p class="lead">A faithful mock of the React + Vite dashboard shipped with the platform. Swap the mock generator for a <code>fetch('/api/...')</code> call to a real <code>webhook-receiver</code> pod and you have production telemetry.</p>
+  </section>
+
+  <section>
+    <div class="live">
+      <div class="stat"><div class="v" id="stat-price">€0.000/kWh</div><div class="l">Current grid price <span class="delta" id="stat-price-delta"></span></div></div>
+      <div class="stat"><div class="v" id="stat-limit">100%</div><div class="l">Load limit issued to actuators</div></div>
+      <div class="stat"><div class="v" id="stat-shared">0 kWh</div><div class="l">Shared in the last 90 min</div></div>
+      <div class="stat"><div class="v" id="stat-co2">0 kg</div><div class="l">CO₂ avoided so far today</div></div>
+    </div>
+
+    <div class="row">
+      <div class="card">
+        <h3>Recent energy shares</h3>
+        <table>
+          <thead><tr><th>Time</th><th>Asset</th><th class="kwh">kWh</th><th class="eur">€</th><th>Settled</th></tr></thead>
+          <tbody id="shares-body"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Flexibility incentive feed</h3>
+        <pre id="incentive-feed" style="max-height:340px;margin:0"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Connected assets</h2>
+    <p class="section-lead">Asset registry sourced from <code>GET /api/v1/assets</code>.</p>
+    <div class="card">
+      <table>
+        <thead><tr><th>DID</th><th>Label</th><th>Type</th><th class="num">Capacity (kW)</th><th>Status</th></tr></thead>
+        <tbody id="assets-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>How to wire this to a real backend</h2>
+    <p class="section-lead">The mock generator lives in <code>assets/app.js</code> (function <code>startDemo</code>). Replace it with the real fetch like so:</p>
+<pre>// inside assets/app.js
+async function loadShares() {
+  const r = await fetch('/api/shares/latest', { headers: { Accept: 'application/json' } });
+  const rows = await r.json();
+  // ...render rows into #shares-body
+}
+const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`);
+ws.onmessage = (e) =&gt; {
+  const { price, signal, limit_pct } = JSON.parse(e.data);
+  document.getElementById('stat-price').textContent = '€' + price.toFixed(3) + '/kWh';
+  document.getElementById('stat-limit').textContent = limit_pct + '%';
+};</pre>
+    <p style="color:var(--muted)">The repo's React dashboard at <a href="https://github.com/DanBarbu/EcoVpp/tree/main/dashboard">dashboard/</a> already speaks the <code>/api</code> + <code>/ws</code> contract — use this static page as a marketing demo and the React app for operators.</p>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

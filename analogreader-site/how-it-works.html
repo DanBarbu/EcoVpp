@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>How it works — analogreader.online</title>
+  <meta name="description" content="From meter snapshot to digital log in under five seconds. Inside the analogreader OCR pipeline." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero center">
+    <div class="pills"><span class="pill">No installation</span><span class="pill">Works offline</span><span class="pill">EU-hosted</span></div>
+    <h1>From <span class="grad">snapshot</span> to digital log.</h1>
+    <p class="lead">Snap, align, read, store. The pipeline runs in roughly four seconds end-to-end — three of which are spent on the on-device OCR model returning a confidence-scored digit string.</p>
+    <a class="btn" href="demo.html">Try it now →</a>
+  </section>
+
+  <section>
+    <h2>The four-step pipeline</h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Capture</h3><p>Photo from a phone, tablet, webcam, or ESP32 + camera. JPEG or PNG; we re-encode anything else.</p></div>
+      <div class="step"><div class="n">2</div><h3>Locate &amp; deskew</h3><p>An on-device YOLOv8n detector finds the meter face, crops it, and corrects perspective. Average runtime: ~80 ms on a modern phone.</p></div>
+      <div class="step"><div class="n">3</div><h3>OCR + confidence</h3><p>Per-dial digit classifier returns a value plus a confidence score per digit. Anything &lt; 0.80 flags for review.</p></div>
+      <div class="step"><div class="n">4</div><h3>Persist</h3><p>Reading + image hash + timestamp + DID are stored in your account. Optionally pushed to your utility via the open API.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Confidence scoring</h2>
+    <p class="section-lead">A reading is only as useful as its trustworthiness. Every digit gets its own confidence score from the classifier, and the overall reading is gated at <strong>0.80</strong>.</p>
+    <div class="grid">
+      <div class="card"><h3 style="margin-bottom:.4rem">≥ 0.95 <span class="badge green">auto-accept</span></h3><p>Stored directly. No human in the loop. Most clear, well-lit photos land here.</p></div>
+      <div class="card"><h3 style="margin-bottom:.4rem">0.80 – 0.95 <span class="badge">accept + audit</span></h3><p>Stored, but tagged for quick visual confirmation in the dashboard.</p></div>
+      <div class="card"><h3 style="margin-bottom:.4rem">&lt; 0.80 <span class="badge amber">review</span></h3><p>Routed to a verification queue. You see the photo with the digit boxes and confirm or correct in two taps.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What we read</h2>
+    <div class="grid">
+      <div class="card power">
+        <div class="icon">⚡</div>
+        <h3>Cyclometer dials</h3>
+        <p>The old white-numbers-on-black wheel: 5–6 digits + a red decimal. Average accuracy in our test set: <strong>99.2%</strong>.</p>
+      </div>
+      <div class="card power">
+        <div class="icon">🔢</div>
+        <h3>LCD digital meters</h3>
+        <p>Seven-segment displays with multi-tariff readouts. We detect the active tariff register from its labels (T1 / T2 / OFF-PEAK).</p>
+      </div>
+      <div class="card gas">
+        <div class="icon">🔥</div>
+        <h3>Gas dials (m³)</h3>
+        <p>Standard 5-digit m³ dial. Ignores the decimal pointer dials the way utility staff do.</p>
+      </div>
+      <div class="card water">
+        <div class="icon">💧</div>
+        <h3>Water dials</h3>
+        <p>m³ + decimal sub-dials. Cold and hot meters separated by photo metadata or manual tag.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Privacy &amp; data residency</h2>
+    <div class="row">
+      <div class="card">
+        <h3>Your photos are yours</h3>
+        <p>Stored encrypted at rest, never shared with utilities or third parties without an explicit per-share toggle. You can wipe everything from Settings → Account → Erase.</p>
+        <p style="margin-top:.8rem">Each photo carries an SHA-256 hash on storage. If you ever need to prove that a reading wasn't tampered with, the hash chain provides an independent audit trail.</p>
+      </div>
+      <div class="card">
+        <h3>EU-hosted, GDPR-aligned</h3>
+        <p>Hosted in Frankfurt by default. We never send personal data to the U.S. unless your account is explicitly U.S.-based. PII is kept off any analytics pipelines we run.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="callout center">
+      <h3>Ready to see it in action?</h3>
+      <a class="btn" href="demo.html" style="margin-top:.8rem">Try the demo →</a>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

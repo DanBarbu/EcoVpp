@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>API — analogreader.online</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="pills"><span class="pill">REST</span><span class="pill">JSON</span><span class="pill">Webhooks</span><span class="pill">Pro plan and up</span></div>
+    <h1>Developer API.</h1>
+    <p class="lead">Push readings in, pull them out, listen for events. Bearer-token auth, JSON throughout.</p>
+  </section>
+
+  <section>
+    <h2>Authentication</h2>
+    <pre>curl -H "Authorization: Bearer YOUR_TOKEN" https://api.analogreader.online/v1/me</pre>
+    <p class="section-lead">Tokens are managed in Settings → API. Pro plans get one token, Team plans get one per apartment, Enterprise gets fine-grained scopes.</p>
+  </section>
+
+  <section>
+    <h2>Submit a reading (OCR)</h2>
+    <pre>curl -X POST https://api.analogreader.online/v1/readings/ocr \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F "photo=@meter.jpg" \
+  -F "kind=power" \
+  -F "meter_id=apt-1-power"
+
+→ 202 Accepted
+{
+  "job_id": "rd_01HX...",
+  "status": "queued"
+}</pre>
+
+    <h2>Submit a reading (manual / device)</h2>
+    <pre>curl -X POST https://api.analogreader.online/v1/readings \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"meter_id":"apt-1-power","value":48213,"unit":"kWh","timestamp":"2026-05-08T18:00:00Z"}'
+
+→ 201 Created
+{
+  "id": "rd_01HX...",
+  "meter_id": "apt-1-power",
+  "value": 48213,
+  "unit": "kWh",
+  "confidence": 1.0,
+  "created_at": "2026-05-08T18:00:01Z"
+}</pre>
+
+    <h2>List readings</h2>
+    <pre>GET /v1/readings?meter_id=apt-1-power&from=2026-05-01&to=2026-05-08
+
+→ 200 OK
+{
+  "readings": [
+    {"id":"rd_…","value":48213,"unit":"kWh","timestamp":"2026-05-08T18:00:00Z","confidence":0.97},
+    ...
+  ]
+}</pre>
+
+    <h2>Webhooks</h2>
+    <p class="section-lead">Configure a webhook URL in Settings → API → Webhooks. We POST JSON when:</p>
+    <ul style="color:var(--muted);line-height:1.7">
+      <li><code>reading.created</code> — a new OCR or manual reading was stored.</li>
+      <li><code>reading.review_required</code> — confidence &lt; 0.80, awaiting your confirmation.</li>
+      <li><code>alert.leak_suspected</code> — non-zero baseline overnight consumption detected.</li>
+      <li><code>alert.budget_exceeded</code> — projected bill exceeds your configured budget cap.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>SDKs</h2>
+    <p class="section-lead">First-party SDKs ship in <a href="https://github.com/DanBarbu/EcoVpp">the EcoVpp repo</a>: Python, JavaScript/TypeScript, MicroPython (ESP32), and a Home Assistant integration.</p>
+  </section>
+
+  <section>
+    <div class="callout">
+      <h3>Rate limits &amp; quotas</h3>
+      <p>Pro: 600 OCR/day, 5,000 reads/day. Team: 6,000 / 50,000. Enterprise: custom. Bursts up to 10 req/s on every plan.</p>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

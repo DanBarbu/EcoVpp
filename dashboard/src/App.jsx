@@ -6,6 +6,7 @@ function App() {
   const [shares, setShares] = useState([])
   const [assets, setAssets] = useState([])
   const [incentive, setIncentive] = useState(null)
+  const [priceForecast, setPriceForecast] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -14,15 +15,23 @@ function App() {
     const fetchData = async () => {
       try {
         setLoading(true)
-        
+
         // Fetch assets
         const assetsResponse = await axios.get('/api/v1/assets')
         setAssets(assetsResponse.data.assets || [])
-        
+
         // Fetch latest shares
         const sharesResponse = await axios.get('/api/shares/latest')
         setShares(sharesResponse.data || [])
-        
+
+        // Fetch price forecast (weather + METOC nowcast driven). Optional service.
+        try {
+          const pf = await axios.get('/api/v1/price/forecast')
+          setPriceForecast(pf.data || null)
+        } catch {
+          setPriceForecast(null)
+        }
+
         setError(null)
       } catch (err) {
         console.error('Error fetching data:', err)
@@ -100,6 +109,31 @@ function App() {
             </p>
           </div>
         )}
+
+        {/* Price Forecast Card (weather + METOC nowcast) */}
+        {priceForecast && priceForecast.points && priceForecast.points.length > 0 && (() => {
+          const pts = priceForecast.points
+          const now = Date.now()
+          const next = pts.reduce((a, b) =>
+            Math.abs(new Date(b.timestamp).getTime() - now) < Math.abs(new Date(a.timestamp).getTime() - now) ? b : a)
+          const prices = pts.map((p) => p.price_eur_mwh)
+          const lo = Math.min(...prices), hi = Math.max(...prices)
+          return (
+            <div className="card">
+              <h2>🌤️ Price Forecast</h2>
+              <div className="value">€{next.price_eur_mwh.toFixed(0)}<small>/MWh</small></div>
+              <p><strong>Next {priceForecast.resolution_min}-min step</strong> · range €{lo.toFixed(0)}–{hi.toFixed(0)}/MWh</p>
+              <p className="status active">Source: {priceForecast.provider} · {pts.length} pts</p>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 44, marginTop: 8 }}>
+                {pts.slice(0, 36).map((p, i) => {
+                  const h = hi > lo ? 8 + ((p.price_eur_mwh - lo) / (hi - lo)) * 92 : 50
+                  return <div key={i} title={`€${p.price_eur_mwh}/MWh`}
+                    style={{ flex: 1, height: `${h}%`, background: '#667eea', borderRadius: '2px 2px 0 0', opacity: 0.85 }} />
+                })}
+              </div>
+            </div>
+          )
+        })()}
 
         {/* Energy Stats Card */}
         <div className="card">

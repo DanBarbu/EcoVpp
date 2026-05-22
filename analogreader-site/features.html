@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Features — analogreader.online</title>
+  <meta name="description" content="Every feature in analogreader.online: OCR, multi-meter dashboards, alerts, exports, API, and more." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="pills"><span class="pill">For households</span><span class="pill">For building managers</span><span class="pill">For utilities</span></div>
+    <h1>Features.</h1>
+    <p class="lead">Everything analogreader does, in one page. From the snap-and-go OCR to the open API your accountant will love.</p>
+  </section>
+
+  <section>
+    <h2>Capture</h2>
+    <div class="grid">
+      <div class="card"><div class="icon">📷</div><h3>Phone camera</h3><p>One-tap PWA. Works on any phone with a browser, no app store install needed.</p></div>
+      <div class="card"><div class="icon">📥</div><h3>Drag-and-drop upload</h3><p>Drop a photo from your phone, tablet, or desktop. JPEG, PNG, HEIC.</p></div>
+      <div class="card"><div class="icon">📡</div><h3>ESP32 / Raspberry Pi</h3><p>Mount a cheap camera in front of the meter and push readings via the open API. Reference firmware on GitHub.</p></div>
+      <div class="card"><div class="icon">📥</div><h3>Bulk CSV import</h3><p>Migrating from a spreadsheet? Import years of historical readings in one upload.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Read</h2>
+    <div class="grid">
+      <div class="card power"><div class="icon">⚡</div><h3>Cyclometer + LCD electricity</h3><p>5–6 digit dials, multi-tariff LCDs (T1/T2/off-peak).</p></div>
+      <div class="card gas"><div class="icon">🔥</div><h3>Gas (m³)</h3><p>Standard 5-digit dial; ignores the small auxiliary pointers.</p></div>
+      <div class="card water"><div class="icon">💧</div><h3>Water (m³ + sub-dials)</h3><p>Cold and hot, with optional manual tagging if both share a photo.</p></div>
+      <div class="card"><div class="icon">🎯</div><h3>Confidence gates</h3><p>Auto-accept ≥ 0.95, audit 0.80–0.95, review &lt; 0.80. Configurable per-meter.</p></div>
+      <div class="card"><div class="icon">✋</div><h3>Manual override</h3><p>Don't trust the OCR? Type it. The original photo is preserved for audit.</p></div>
+      <div class="card"><div class="icon">🔁</div><h3>Periodic capture</h3><p>Got a fixed-camera setup? Schedule readings every 15 min, hourly, or daily.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Track</h2>
+    <div class="grid">
+      <div class="card"><div class="icon">📈</div><h3>Daily / monthly / yearly charts</h3><p>Stacked by utility, compared against last year, with weather overlay for heating loads.</p></div>
+      <div class="card"><div class="icon">💶</div><h3>Live bill projection</h3><p>Set your tariff (kWh/€, m³/€) and see the running cost. Cap and trip alerts if you blow the budget.</p></div>
+      <div class="card"><div class="icon">🚨</div><h3>Leak detection</h3><p>Flat baseline overnight gas/water consumption → instant alert. Catches drips before the bill arrives.</p></div>
+      <div class="card"><div class="icon">🏠</div><h3>Multi-property</h3><p>Track your home, your rental, your vacation place, your parents' place — all under one account.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Share &amp; report</h2>
+    <div class="grid">
+      <div class="card"><div class="icon">📄</div><h3>PDF + CSV exports</h3><p>Bill-period reports formatted for the utility's preferred format (UK, EU, US).</p></div>
+      <div class="card"><div class="icon">🔗</div><h3>Read-only share links</h3><p>Send a signed URL to your landlord or building manager. Expires automatically.</p></div>
+      <div class="card"><div class="icon">🔌</div><h3>Open API</h3><p>JSON + Webhooks. Pull readings into Home Assistant, Grafana, Power BI, or a spreadsheet.</p></div>
+      <div class="card"><div class="icon">📨</div><h3>Email reports</h3><p>Monthly digest in your inbox. Set the day, set the recipients, done.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>For pros</h2>
+    <div class="grid">
+      <div class="card"><div class="icon">🏢</div><h3>Building manager view</h3><p>Roll up readings across an entire condominium. Per-apartment access tokens. RED II energy-sharing exports.</p></div>
+      <div class="card"><div class="icon">🤝</div><h3>Utility submission</h3><p>Integrations with select utilities to submit your reading on bill day. No more postcards or call-centre wait times.</p></div>
+      <div class="card"><div class="icon">🧰</div><h3>White-label</h3><p>Use analogreader's OCR under your own brand. SLA-backed plans available — get in touch.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="callout">
+      <h3>Wired with the EcoVpp platform</h3>
+      <p>analogreader is the consumer front-end to the open-source <a href="https://github.com/DanBarbu/EcoVpp">EcoVpp orchestration platform</a>. The OCR pipeline, settlement layer, and energy-sharing logic are all the same code. If you run a Virtual Power Plant, you get a consumer-grade meter UI for free.</p>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

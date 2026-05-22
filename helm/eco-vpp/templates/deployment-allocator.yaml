@@ -1,0 +1,38 @@
+{{- if .Values.redIiAllocator.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-allocator
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+      component: allocator
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        component: allocator
+    spec:
+      containers:
+        - name: allocator
+          image: {{ include "eco-vpp.image" (dict "Values" .Values "component" "red-ii-allocator") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: DATABASE_URL
+              value: {{ include "eco-vpp.dbUrl" . | quote }}
+            - name: ALLOCATION_INTERVAL_MIN
+              value: {{ .Values.redIiAllocator.intervalMinutes | quote }}
+            - name: INTERNAL_PRICE_EUR_KWH
+              value: {{ .Values.redIiAllocator.internalPriceEurKwh | quote }}
+            - name: GSY_URL
+              value: {{ .Values.redIiAllocator.gsy.url | quote }}
+            - name: GSY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eco-vpp.fullname" . }}-secrets
+                  key: gsyToken
+{{- end -}}

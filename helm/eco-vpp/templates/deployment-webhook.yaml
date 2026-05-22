@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-webhook
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.webhookReceiver.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+      component: webhook
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        component: webhook
+    spec:
+      containers:
+        - name: webhook
+          image: {{ include "eco-vpp.image" (dict "Values" .Values "component" "webhook-receiver") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              value: {{ include "eco-vpp.dbUrl" . | quote }}
+            - name: INGEST_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eco-vpp.fullname" . }}-secrets
+                  key: ingestToken
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8000 }
+            initialDelaySeconds: 5
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8000 }
+            initialDelaySeconds: 15
+          resources: {{- toYaml .Values.webhookReceiver.resources | nindent 12 }}

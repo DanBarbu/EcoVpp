@@ -1,0 +1,43 @@
+{{- if .Values.flexmeasures.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-flexmeasures
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+      component: flexmeasures
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        component: flexmeasures
+    spec:
+      containers:
+        - name: flexmeasures
+          image: {{ .Values.flexmeasures.image }}
+          ports:
+            - containerPort: 5000
+          env:
+            - name: SQLALCHEMY_DATABASE_URI
+              value: {{ include "eco-vpp.dbUrl" . | quote }}
+            - name: FLEXMEASURES_MODE
+              value: "production"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-flexmeasures
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  selector:
+    app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+    component: flexmeasures
+  ports:
+    - port: 5000
+      targetPort: 5000
+{{- end -}}

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact — ECO-VPP</title>
+  <meta name="description" content="Get in touch with the ECO-VPP project team." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>Contact.</h1>
+    <p class="lead">Running an energy community? Building a pilot? Auditing the platform? Drop a line and we'll reply within two working days.</p>
+  </section>
+
+  <section class="row">
+    <div class="card">
+      <h3>Send us a message</h3>
+      <form id="contact-form" novalidate>
+        <div class="field"><label for="name">Name</label><input class="input" id="name" name="name" required autocomplete="name" /></div>
+        <div class="field"><label for="email">Email</label><input class="input" id="email" name="email" type="email" required autocomplete="email" /></div>
+        <div class="field"><label for="org">Organisation (optional)</label><input class="input" id="org" name="organisation" autocomplete="organization" /></div>
+        <div class="field"><label for="topic">Topic</label>
+          <select class="select" id="topic" name="topic">
+            <option>Pilot inquiry</option>
+            <option>Partnership</option>
+            <option>Technical question</option>
+            <option>Press / media</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field"><label for="message">Message</label><textarea class="textarea" id="message" name="message" rows="5" required></textarea></div>
+        <button class="btn" type="submit">Send →</button>
+      </form>
+      <div id="contact-result"></div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Other channels</h3>
+        <p style="margin-bottom:.5rem">Open an issue or pull request on GitHub for technical questions:</p>
+        <p><a href="https://github.com/DanBarbu/EcoVpp">github.com/DanBarbu/EcoVpp</a></p>
+      </div>
+      <div class="card" style="margin-top:1rem">
+        <h3>Wiring this form</h3>
+        <p>The submit handler in <code>assets/app.js</code> currently logs to the console. Replace the body of its <code>onSubmit</code> with a <code>fetch()</code> to your CRM, Mailchimp, Netlify Forms, or a Cloudflare Worker — see the README in <code>site/</code> for snippets.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

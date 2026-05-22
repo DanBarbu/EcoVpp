@@ -1,0 +1,19 @@
+# Chaos Mesh experiment: kill the Mainflux MQTT pod (HaLow gateway proxy)
+# every 5 minutes for 30 seconds. Verifies the platform's RTO < 30 s
+# (Sprint 5 acceptance criterion).
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: halow-gateway-failure
+  namespace: eco-vpp
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces: [eco-vpp]
+    labelSelectors:
+      app.kubernetes.io/name: eco-vpp
+      component: mainflux
+  scheduler:
+    cron: "*/5 * * * *"
+  duration: "30s"

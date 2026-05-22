@@ -1,0 +1,40 @@
+{{- if .Values.mainflux.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-mainflux
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+      component: mainflux
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        component: mainflux
+    spec:
+      containers:
+        - name: mainflux-mqtt
+          image: {{ .Values.mainflux.image }}
+          ports:
+            - containerPort: 1883
+              name: mqtt
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-mainflux-mqtt
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  selector:
+    app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+    component: mainflux
+  ports:
+    - port: {{ .Values.mainflux.mqttPort }}
+      targetPort: 1883
+      name: mqtt
+{{- end -}}
