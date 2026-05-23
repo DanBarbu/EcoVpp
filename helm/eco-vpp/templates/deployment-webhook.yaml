@@ -30,6 +30,10 @@ spec:
                 secretKeyRef:
                   name: {{ include "eco-vpp.fullname" . }}-secrets
                   key: ingestToken
+            - name: ECOVPP_ENV
+              value: {{ .Values.webhookReceiver.env | default "production" | quote }}
+            - name: CORS_ALLOW_ORIGINS
+              value: {{ .Values.webhookReceiver.corsAllowOrigins | default "" | quote }}
           readinessProbe:
             httpGet: { path: /healthz, port: 8000 }
             initialDelaySeconds: 5

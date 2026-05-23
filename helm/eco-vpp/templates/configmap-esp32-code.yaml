@@ -12,17 +12,30 @@ data:
     sample to the cloud over HaLow with up to 5 retries (HaLow can introduce
     seconds of latency, so the device timestamp is authoritative).
 
-    Configure via environment variables baked into the firmware partition:
-      WIFI_SSID, WIFI_PASS, MQTT_BROKER, DEVICE_DID, INGEST_TOKEN
+    SECURITY: this ConfigMap is plaintext and world-readable to anyone with
+    `get configmap` RBAC. Secrets (Wi-Fi password, ingest token) are therefore
+    NEVER templated here — they are flashed onto each device at provisioning
+    time and read from a small on-device secrets file (secrets.py). The
+    non-secret config (SSID, broker, DID) is fine to ship in the ConfigMap.
+
+    Provision per device, e.g.:
+      printf 'WIFI_PASS="..."\nINGEST_TOKEN="..."\n' > secrets.py  # then ampy put
+    The token value comes from the eco-vpp-secrets Secret, not from here:
+      kubectl get secret {{ include "eco-vpp.fullname" . }}-secrets \
+        -o jsonpath='{.data.ingestToken}' | base64 -d
     """
     import network, time, ujson, urequests, machine
 
+    try:
+        from secrets import WIFI_PASS, INGEST_TOKEN   # device-local, never in-cluster
+    except ImportError:
+        WIFI_PASS = ""        # set via secrets.py at flash time
+        INGEST_TOKEN = ""
+
     WIFI_SSID = "{{ .Values.esp32.wifiSsid }}"
-    WIFI_PASS = "{{ .Values.esp32.wifiPass }}"
     MQTT_BROKER = "{{ .Values.esp32.mqttBroker }}"
     DEVICE_DID = "{{ .Values.esp32.deviceDid }}"
     INGEST_URL = "https://{{ .Values.ingress.host }}/api/v1/telemetry/ingest"
-    INGEST_TOKEN = "{{ .Values.ingestToken }}"
 
     LOAD_RELAY_PIN = 4         # GPIO connected to load actuator (SET_LOAD_LIMIT)
     OVERRIDE_PIN = 0           # local manual override (boot button)

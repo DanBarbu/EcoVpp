@@ -6,6 +6,7 @@ consumed by the React dashboard.
 """
 from __future__ import annotations
 
+import hmac
 import json
 import logging
 import os
@@ -28,7 +29,22 @@ DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "postgresql://eco:eco@postgres:5432/ecovpp",
 )
+ECOVPP_ENV = os.getenv("ECOVPP_ENV", "dev")
 INGEST_TOKEN = os.getenv("INGEST_TOKEN", "dev-token")
+
+# Fail closed: outside dev, refuse to start with a missing/placeholder token so
+# a forgeable default can never reach production.
+_WEAK_TOKENS = {"", "dev-token", "change-me"}
+if ECOVPP_ENV != "dev" and INGEST_TOKEN in _WEAK_TOKENS:
+    raise RuntimeError(
+        "INGEST_TOKEN is unset or a placeholder while ECOVPP_ENV != 'dev'. "
+        "Set a strong INGEST_TOKEN (e.g. from the eco-vpp-secrets Secret)."
+    )
+
+# Cross-origin: restrict to the dashboard origin(s) in prod; '*' only in dev.
+CORS_ORIGINS = [o for o in os.getenv("CORS_ALLOW_ORIGINS", "").split(",") if o] or (
+    ["*"] if ECOVPP_ENV == "dev" else []
+)
 
 INGEST_COUNTER = Counter(
     "ecovpp_telemetry_ingested_total",
@@ -162,7 +178,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 app = FastAPI(title="ECO-VPP Webhook Receiver", version="0.1.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -173,8 +189,8 @@ async def get_pool(request: Request) -> asyncpg.Pool:
 
 
 def require_token(request: Request) -> None:
-    token = request.headers.get("x-ingest-token")
-    if token != INGEST_TOKEN:
+    token = request.headers.get("x-ingest-token") or ""
+    if not hmac.compare_digest(token, INGEST_TOKEN):
         raise HTTPException(status_code=401, detail="invalid ingest token")
 
 
@@ -188,7 +204,7 @@ async def metrics() -> Response:
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
-@app.post("/api/v1/assets", status_code=201)
+@app.post("/api/v1/assets", status_code=201, dependencies=[Depends(require_token)])
 async def register_asset(asset: AssetIn, pool: asyncpg.Pool = Depends(get_pool)) -> dict[str, Any]:
     asset_id = uuid4()
     async with pool.acquire() as conn:
@@ -309,14 +325,17 @@ async def latest_shares(pool: asyncpg.Pool = Depends(get_pool)) -> list[dict[str
     return [dict(r) for r in rows]
 
 
-@app.post("/api/shares")
+@app.post("/api/shares", dependencies=[Depends(require_token)])
 async def create_share(
     asset: str,
     kwh: float,
     price: float,
     pool: asyncpg.Pool = Depends(get_pool),
 ) -> dict[str, Any]:
-    """Record a community-internal share (RED II Collective Self-Consumption)."""
+    """Record a community-internal share (RED II Collective Self-Consumption).
+
+    Authenticated: these rows are settled on-chain, so creation must carry the
+    ingest token (the RED II allocator and flexibility engine hold it)."""
     async with pool.acquire() as conn:
         share_id = await conn.fetchval(
             """
@@ -330,10 +349,11 @@ async def create_share(
     return {"id": share_id, "asset": asset, "kwh": kwh, "price": price}
 
 
-@app.post("/api/internal/incentive")
+@app.post("/api/internal/incentive", dependencies=[Depends(require_token)])
 async def push_incentive(payload: dict[str, Any]) -> dict[str, Any]:
     """Internal hook: flexibility-engine pushes incentive updates here, we
-    fan them out over WebSocket to dashboard clients."""
+    fan them out over WebSocket to dashboard clients. Authenticated so clients
+    cannot spoof curtailment/price signals to every dashboard."""
     await hub.broadcast(payload)
     return {"broadcasted": True}
 
