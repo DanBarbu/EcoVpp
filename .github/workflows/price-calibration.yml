@@ -11,6 +11,11 @@ name: Price calibration (EU markets)
 on:
   schedule:
     - cron: "30 5 * * 1"   # Mondays 05:30 UTC
+  push:
+    branches: [main]
+    paths:                 # run when the algorithm or zone list changes
+      - "services/price-forecast/**"
+      - ".github/workflows/price-calibration.yml"
   workflow_dispatch:
     inputs:
       zone:
