@@ -1,0 +1,26 @@
+Source: energycharts | window: 14d | threshold: 90%
+
+[AT] Austria                r=+0.540 n=  22 -> anchored    [ANCHOR]
+[BE] Belgium                r=-0.125 n=  22 -> anchored    [ANCHOR]
+[BG] Bulgaria               r=-0.353 n=  21 -> anchored    [ANCHOR]
+[HR] Croatia                r=+0.504 n=  22 -> anchored    [ANCHOR]
+[CZ] Czechia                r=+0.283 n=  22 -> anchored    [ANCHOR]
+[DK1] Denmark West           r=+0.423 n=  22 -> anchored    [ANCHOR]
+[DK2] Denmark East           r=+0.508 n=  22 -> anchored    [ANCHOR]
+[EE] Estonia                r=+0.229 n=  21 -> anchored    [ANCHOR]
+[FI] Finland                r=-0.563 n=  21 -> anchored    [ANCHOR]
+[FR] France                 r=+0.425 n=  22 -> anchored    [ANCHOR]
+[DE_LU] Germany-Luxembourg     r=-0.055 n=  22 -> anchored    [ANCHOR]
+[GR] Greece                 r=+0.505 n=  21 -> anchored    [ANCHOR]
+[HU] Hungary                r=+0.251 n=  22 -> anchored    [ANCHOR]
+[IT_NORD] Italy North            r=-0.214 n=  22 -> anchored    [ANCHOR]
+[IT_CNOR] Italy Centre-North     r=+0.372 n=  22 -> anchored    [ANCHOR]
+[IT_SUD] Italy South            r=-0.626 n=  22 -> anchored    [ANCHOR]
+[LT] Lithuania              r=+0.501 n=  21 -> anchored    [ANCHOR]
+[PL] Poland                 r=+0.297 n=  22 -> anchored    [ANCHOR]
+[PT] Portugal               r=-0.133 n=  23 -> anchored    [ANCHOR]
+[RO] Romania                r=+0.018 n=  21 -> anchored    [ANCHOR]
+[SK] Slovakia               r=+0.443 n=  22 -> anchored    [ANCHOR]
+[SE3] Sweden SE3             r=-0.404 n=  22 -> anchored    [ANCHOR]
+
+Summary: 22 zones, mean r=+0.128, 22 below 90% -> anchored to market price.
