@@ -1,0 +1,65 @@
+name: Integration demo (Level 2)
+
+# Boots the full docker-compose stack on a GitHub-hosted runner and runs
+# demo.sh against it. The job log IS the Level 2 result, removing the need to
+# `git clone` + run Docker locally.
+#
+# Triggers on push to main when stack-relevant files change, and on demand.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/**"
+      - "dashboard/**"
+      - "docker-compose.yml"
+      - "infra/**"
+      - "demo.sh"
+      - ".github/workflows/integration-demo.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: integration-demo
+  cancel-in-progress: true
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show docker + compose versions
+        run: docker --version && docker compose version
+
+      - name: Build & boot the stack
+        run: docker compose up --build -d
+
+      - name: Wait for core services to be reachable
+        run: |
+          set -e
+          for url in http://localhost:8000/healthz http://localhost:8003/healthz; do
+            echo "waiting on $url"
+            for i in $(seq 1 60); do
+              if curl -fs -o /dev/null "$url"; then echo "ready"; break; fi
+              [ "$i" = "60" ] && echo "::error::$url not ready after 120s" && exit 1
+              sleep 2
+            done
+          done
+
+      - name: docker compose ps
+        run: docker compose ps
+
+      - name: Run demo.sh
+        run: bash demo.sh
+
+      - name: Logs on failure
+        if: failure()
+        run: docker compose logs --tail=300
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v
