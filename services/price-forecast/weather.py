@@ -86,3 +86,42 @@ def fetch(horizon_hours: int = 6, client: httpx.Client | None = None,
         resolution_min=STEP_MIN,
         provider=metoc_nowcast.provider(),
     )
+
+
+def archive(start: datetime, end: datetime,
+            lat: float | None = None, lon: float | None = None,
+            client: httpx.Client | None = None) -> WeatherForecast:
+    """Historical hourly weather from the Open-Meteo archive (token-free).
+
+    The forecast endpoint only serves forward in time, so backtesting against
+    past day-ahead market prices requires the *archive* endpoint. Uses
+    `shortwave_radiation` (GHI, W/m²) as the PV proxy in lieu of
+    `global_tilted_irradiance` (which is forecast-only); for the linear
+    merit-order correlation the GHI vs GTI scaling is absorbed by the OLS
+    calibration in `calibration.evaluate()`.
+    """
+    owned = client is None
+    client = client or httpx.Client(timeout=20.0)
+    try:
+        params = {
+            "latitude": LAT if lat is None else lat,
+            "longitude": LON if lon is None else lon,
+            "start_date": start.astimezone(timezone.utc).strftime("%Y-%m-%d"),
+            "end_date": end.astimezone(timezone.utc).strftime("%Y-%m-%d"),
+            "hourly": "temperature_2m,wind_speed_10m,shortwave_radiation",
+            "timezone": "UTC",
+        }
+        resp = client.get("https://archive-api.open-meteo.com/v1/archive", params=params)
+        resp.raise_for_status()
+        h = resp.json().get("hourly") or {}
+        times = h.get("time", [])
+        gti = _to_series(times, h.get("shortwave_radiation", []))
+        wind = _to_series(times, h.get("wind_speed_10m", []))
+        temp = _to_series(times, h.get("temperature_2m", []))
+    finally:
+        if owned:
+            client.close()
+    return WeatherForecast(
+        gti=gti, wind=wind, temperature=temp,
+        resolution_min=60, provider="open-meteo-archive",
+    )
