@@ -1,26 +1,38 @@
 Source: energycharts | window: 14d | threshold: 90%
+Weather: open-meteo-archive (historical, matches market window)
 
-[AT] Austria                r=+0.540 n=  22 -> anchored    [ANCHOR]
-[BE] Belgium                r=-0.125 n=  22 -> anchored    [ANCHOR]
-[BG] Bulgaria               r=-0.353 n=  21 -> anchored    [ANCHOR]
-[HR] Croatia                r=+0.504 n=  22 -> anchored    [ANCHOR]
-[CZ] Czechia                r=+0.283 n=  22 -> anchored    [ANCHOR]
-[DK1] Denmark West           r=+0.423 n=  22 -> anchored    [ANCHOR]
-[DK2] Denmark East           r=+0.508 n=  22 -> anchored    [ANCHOR]
-[EE] Estonia                r=+0.229 n=  21 -> anchored    [ANCHOR]
-[FI] Finland                r=-0.563 n=  21 -> anchored    [ANCHOR]
-[FR] France                 r=+0.425 n=  22 -> anchored    [ANCHOR]
-[DE_LU] Germany-Luxembourg     r=-0.055 n=  22 -> anchored    [ANCHOR]
-[GR] Greece                 r=+0.505 n=  21 -> anchored    [ANCHOR]
-[HU] Hungary                r=+0.251 n=  22 -> anchored    [ANCHOR]
-[IT_NORD] Italy North            r=-0.214 n=  22 -> anchored    [ANCHOR]
-[IT_CNOR] Italy Centre-North     r=+0.372 n=  22 -> anchored    [ANCHOR]
-[IT_SUD] Italy South            r=-0.626 n=  22 -> anchored    [ANCHOR]
-[LT] Lithuania              r=+0.501 n=  21 -> anchored    [ANCHOR]
-[PL] Poland                 r=+0.297 n=  22 -> anchored    [ANCHOR]
-[PT] Portugal               r=-0.133 n=  23 -> anchored    [ANCHOR]
-[RO] Romania                r=+0.018 n=  21 -> anchored    [ANCHOR]
-[SK] Slovakia               r=+0.443 n=  22 -> anchored    [ANCHOR]
-[SE3] Sweden SE3             r=-0.404 n=  22 -> anchored    [ANCHOR]
+[AT] Austria                r=+0.301 n= 358 -> anchored    [ANCHOR]
+[BE] Belgium                r=+0.204 n= 358 -> anchored    [ANCHOR]
+[BG] Bulgaria               r=+0.507 n= 357 -> anchored    [ANCHOR]
+[HR] Croatia                r=+0.352 n= 358 -> anchored    [ANCHOR]
+[CY] Cyprus                 SKIPPED — market fetch failed: zone CY has no Energy-Charts mapping; use --source entsoe
+[CZ] Czechia                r=+0.300 n= 358 -> anchored    [ANCHOR]
+[DK1] Denmark West           r=+0.227 n= 358 -> anchored    [ANCHOR]
+[DK2] Denmark East           r=+0.364 n= 358 -> anchored    [ANCHOR]
+[EE] Estonia                r=+0.114 n= 357 -> anchored    [ANCHOR]
+[FI] Finland                r=+0.059 n= 357 -> anchored    [ANCHOR]
+[FR] France                 r=+0.468 n= 358 -> anchored    [ANCHOR]
+[DE_LU] Germany-Luxembourg     r=+0.336 n= 358 -> anchored    [ANCHOR]
+[GR] Greece                 r=+0.516 n= 357 -> anchored    [ANCHOR]
+[HU] Hungary                r=+0.337 n= 358 -> anchored    [ANCHOR]
+[IE] Ireland (SEM)          SKIPPED — market fetch failed: Client error '400 Bad Request' for url 'https://api.energy-charts.info/price?bzn=IE&start=2026-05-11&end=2026-05-25'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+[IT_NORD] Italy North            r=+0.155 n= 358 -> anchored    [ANCHOR]
+[IT_CNOR] Italy Centre-North     r=+0.314 n= 358 -> anchored    [ANCHOR]
+[IT_SUD] Italy South            r=+0.338 n= 358 -> anchored    [ANCHOR]
+[LV] Latvia                 r=+0.367 n= 357 -> anchored    [ANCHOR]
+[LT] Lithuania              r=+0.271 n= 357 -> anchored    [ANCHOR]
+[MT] Malta                  SKIPPED — market fetch failed: zone MT has no Energy-Charts mapping; use --source entsoe
+[NL] Netherlands            r=+0.247 n= 358 -> anchored    [ANCHOR]
+[PL] Poland                 r=+0.385 n= 358 -> anchored    [ANCHOR]
+[PT] Portugal               r=+0.375 n= 358 -> anchored    [ANCHOR]
+[RO] Romania                r=+0.306 n= 357 -> anchored    [ANCHOR]
+[SK] Slovakia               r=+0.414 n= 358 -> anchored    [ANCHOR]
+[SI] Slovenia               r=+0.274 n= 358 -> anchored    [ANCHOR]
+[ES] Spain                  r=+0.487 n= 334 -> anchored    [ANCHOR]
+[SE3] Sweden SE3             SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=SE3&start=2026-05-11&end=2026-05-25'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
+[SE4] Sweden SE4             r=+0.428 n= 358 -> anchored    [ANCHOR]
 
-Summary: 22 zones, mean r=+0.128, 22 below 90% -> anchored to market price.
+Summary: 26 zones calibrated, mean r=+0.325, 26 below 90% -> anchored to market price.
+Skipped: 4 zone(s) — CY, IE, MT, SE3

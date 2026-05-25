@@ -1,9 +1,9 @@
 {
   "mode": "anchored",
-  "p_zero": 201.157,
-  "slope": -29.1533,
-  "correlation": -0.6265,
-  "n": 22,
+  "p_zero": 54.064,
+  "slope": 12.7271,
+  "correlation": 0.338,
+  "n": 358,
   "threshold": 0.9,
-  "fitted_at": 1779548954.9086926
+  "fitted_at": 1779699376.2583816
 }
