@@ -2,7 +2,7 @@ Source: energycharts | window: 14d | threshold: 90%
 Weather: open-meteo-archive (historical, matches market window)
 
 [AT] Austria                r=+0.301 n= 358 -> anchored    [ANCHOR]
-[BE] Belgium                r=+0.204 n= 358 -> anchored    [ANCHOR]
+[BE] Belgium                SKIPPED — market fetch failed: Server disconnected without sending a response.
 [BG] Bulgaria               r=+0.507 n= 357 -> anchored    [ANCHOR]
 [HR] Croatia                r=+0.352 n= 358 -> anchored    [ANCHOR]
 [CY] Cyprus                 SKIPPED — market fetch failed: zone CY has no Energy-Charts mapping; use --source entsoe
@@ -30,9 +30,8 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 [SK] Slovakia               r=+0.414 n= 358 -> anchored    [ANCHOR]
 [SI] Slovenia               r=+0.274 n= 358 -> anchored    [ANCHOR]
 [ES] Spain                  r=+0.487 n= 334 -> anchored    [ANCHOR]
-[SE3] Sweden SE3             SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=SE3&start=2026-05-11&end=2026-05-25'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
+[SE3] Sweden SE3             r=+0.303 n= 358 -> anchored    [ANCHOR]
 [SE4] Sweden SE4             r=+0.428 n= 358 -> anchored    [ANCHOR]
 
-Summary: 26 zones calibrated, mean r=+0.325, 26 below 90% -> anchored to market price.
-Skipped: 4 zone(s) — CY, IE, MT, SE3
+Summary: 26 zones calibrated, mean r=+0.329, 26 below 90% -> anchored to market price.
+Skipped: 4 zone(s) — BE, CY, IE, MT
