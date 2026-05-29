@@ -75,6 +75,18 @@ services:
       LOG_LEVEL: INFO
     ports: ["8003:8003"]
 
+  hydrobattery-atlas:
+    build: ./services/hydrobattery-atlas
+    environment:
+      DATABASE_URL: postgresql://eco:eco@postgres:5432/ecovpp
+      ECOVPP_ENV: dev          # relaxes token/CORS guards for local dev
+      INGEST_TOKEN: dev-token
+      LOG_LEVEL: INFO
+    ports: ["8004:8004"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   red-ii-allocator:
     build: ./services/red-ii-allocator
     environment:

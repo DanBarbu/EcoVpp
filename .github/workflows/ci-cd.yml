@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service: [webhook-receiver, flexibility-engine, settlement, red-ii-allocator, forecast, price-forecast]
+        service: [webhook-receiver, flexibility-engine, settlement, red-ii-allocator, forecast, price-forecast, hydrobattery-atlas]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -68,6 +68,8 @@ jobs:
             context: services/forecast
           - name: price-forecast
             context: services/price-forecast
+          - name: hydrobattery-atlas
+            context: services/hydrobattery-atlas
           - name: dashboard
             context: dashboard
     steps:

@@ -18,6 +18,7 @@ Hardware target: sub-€20 ESP32-S3 + ADE7913 + HaLow Wi-Fi node
 │   ├── webhook-receiver/      # FastAPI ingest, asset registry, dashboard WS hub
 │   ├── flexibility-engine/    # FlexMeasures → MQTT SET_LOAD_LIMIT issuer
 │   ├── red-ii-allocator/      # RED II pro-rata Collective Self-Consumption
+│   ├── hydrobattery-atlas/    # Pumped-hydro storage site catalog + dispatch calc
 │   ├── settlement/            # Energy Web Origin batch anchoring + GoO certs
 │   └── forecast/              # Open-Meteo → FlexMeasures solar forecast (CronJob)
 ├── dashboard/                 # React + Vite operator dashboard
@@ -47,6 +48,7 @@ Once everything is healthy:
 | Webhook receiver | http://localhost:8000/healthz |
 | Flexibility engine metrics | http://localhost:8001/metrics |
 | Settlement | http://localhost:8002/healthz |
+| Hydrobattery Atlas | http://localhost:8004/healthz |
 | Mosquitto MQTT (Mainflux stand-in) | tcp://localhost:1883 |
 
 Register an apartment meter and post a sample telemetry record:
@@ -127,6 +129,42 @@ The firmware:
 consumption over the window, allocates surplus solar **pro-rata** across
 consumers (writing rows into `energy_shares` priced at the internal tariff),
 and pushes any leftover surplus to the **GSY-e P2P market** as an offer.
+
+## Hydrobattery Atlas
+
+`hydrobattery-atlas` is a catalogue of pumped-hydro energy-storage sites the VPP
+can dispatch as long-duration flexibility. Each site records its physical
+characteristics — hydraulic head, usable reservoir volume, rated turbine/pump
+power, round-trip efficiency — plus a live state-of-charge. The service derives
+the deliverable energy capacity from first principles:
+
+```
+E_kWh = rho * g * V * h * eta / 3.6e6      (rho = 1000 kg/m^3, g = 9.81 m/s^2)
+```
+
+Endpoints:
+
+```
+POST   /api/v1/hydrobatteries              # register a site (token-gated)
+GET    /api/v1/hydrobatteries              # list; filter by status + lat/lon bbox
+GET    /api/v1/hydrobatteries/{id}         # site detail (+ available / headroom kWh)
+GET    /api/v1/hydrobatteries/{id}/dispatch?power_kw=&hours=   # feasibility check
+PATCH  /api/v1/hydrobatteries/{id}/soc     # update state-of-charge (token-gated)
+DELETE /api/v1/hydrobatteries/{id}         # remove a site (token-gated)
+GET    /api/v1/atlas/summary               # fleet totals + bounding box for the map
+```
+
+Register a site and check a dispatch:
+
+```bash
+curl -s http://localhost:8004/api/v1/hydrobatteries \
+  -H 'Content-Type: application/json' -H 'X-Ingest-Token: dev-token' \
+  -d '{"name":"Lac Alpin","latitude":45.9,"longitude":6.9,"head_m":300,
+       "usable_volume_m3":1000000,"rated_power_kw":100000,"round_trip_efficiency":0.8}'
+
+# -> storage_capacity_kwh ~= 654000; then:
+curl -s 'http://localhost:8004/api/v1/hydrobatteries/<id>/dispatch?power_kw=50000&hours=2'
+```
 
 ## Settlement & GDPR
 

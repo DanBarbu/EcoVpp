@@ -1,0 +1,59 @@
+{{- if .Values.hydrobatteryAtlas.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-hydrobattery-atlas
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.hydrobatteryAtlas.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+      component: hydrobattery-atlas
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        component: hydrobattery-atlas
+    spec:
+      containers:
+        - name: hydrobattery-atlas
+          image: {{ include "eco-vpp.image" (dict "Values" .Values "component" "hydrobattery-atlas") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8004
+          env:
+            - name: DATABASE_URL
+              value: {{ include "eco-vpp.dbUrl" . | quote }}
+            - name: INGEST_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eco-vpp.fullname" . }}-secrets
+                  key: ingestToken
+            - name: ECOVPP_ENV
+              value: {{ .Values.hydrobatteryAtlas.env | default "production" | quote }}
+            - name: CORS_ALLOW_ORIGINS
+              value: {{ .Values.hydrobatteryAtlas.corsAllowOrigins | default "" | quote }}
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8004 }
+            initialDelaySeconds: 5
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8004 }
+            initialDelaySeconds: 15
+          resources: {{- toYaml .Values.hydrobatteryAtlas.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "eco-vpp.fullname" . }}-hydrobattery-atlas
+  labels: {{- include "eco-vpp.labels" . | nindent 4 }}
+spec:
+  selector:
+    app.kubernetes.io/name: {{ include "eco-vpp.name" . }}
+    component: hydrobattery-atlas
+  ports:
+    - port: {{ .Values.hydrobatteryAtlas.service.port }}
+      targetPort: 8004
+      name: http
+{{- end -}}

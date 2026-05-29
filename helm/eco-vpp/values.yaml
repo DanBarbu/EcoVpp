@@ -70,6 +70,18 @@ priceForecast:
     limits: { cpu: 500m, memory: 256Mi }
     requests: { cpu: 50m, memory: 64Mi }
 
+hydrobatteryAtlas:
+  enabled: true
+  replicas: 1
+  env: "production"          # 'dev' relaxes token/CORS guards; 'production' fails closed
+  corsAllowOrigins: ""       # comma-separated dashboard origins
+  service:
+    type: ClusterIP
+    port: 8004
+  resources:
+    limits: { cpu: 500m, memory: 256Mi }
+    requests: { cpu: 50m, memory: 64Mi }
+
 settlement:
   replicas: 1
   service:
