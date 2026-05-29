@@ -1,0 +1,10 @@
+[build]
+  base    = "pacificaromania-site"
+  publish = "pacificaromania-site"
+  command = ""
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
