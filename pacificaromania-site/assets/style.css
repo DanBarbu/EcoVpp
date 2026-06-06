@@ -196,6 +196,43 @@ footer {
 }
 footer a { color: var(--gold); }
 
+/* ===== LANGUAGE SWITCHER ===== */
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,.12);
+  border-radius: 20px;
+  padding: 4px 10px;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,.7);
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color .2s;
+  letter-spacing: .04em;
+}
+
+.lang-btn:hover { color: var(--white); }
+
+.lang-btn.active {
+  color: var(--white);
+  background: rgba(255,255,255,.2);
+  border-radius: 12px;
+  padding: 2px 8px;
+}
+
+.lang-divider {
+  color: rgba(255,255,255,.3);
+  font-size: .8rem;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 640px) {
   nav a:not(.btn-fb) { display: none; }

@@ -1,16 +1,11 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Pacifica Romania – Promovăm pacea, dialogul și reconcilierea în România." />
+  <meta name="description" content="Pacifica Romania – Promoting peace, dialogue and reconciliation in Romania." />
   <title>Pacifica Romania</title>
   <link rel="stylesheet" href="assets/style.css" />
-  <!-- Facebook SDK -->
-  <div id="fb-root"></div>
-  <script async defer crossorigin="anonymous"
-    src="https://connect.facebook.net/ro_RO/sdk.js#xfbml=1&version=v19.0">
-  </script>
 </head>
 <body>
 
@@ -22,10 +17,15 @@
         <span class="logo-text">Pacifica Romania</span>
       </div>
       <nav>
-        <a href="#despre">Despre</a>
-        <a href="#noutati">Noutăți</a>
-        <a href="#contact">Contact</a>
+        <a href="#about"    class="nav-link" data-en="About"     data-ro="Despre">About</a>
+        <a href="#news"     class="nav-link" data-en="News"      data-ro="Noutăți">News</a>
+        <a href="#contact"  class="nav-link" data-en="Contact"   data-ro="Contact">Contact</a>
         <a href="https://www.facebook.com/profile.php?id=61574158391297" target="_blank" class="btn-fb">Facebook</a>
+        <div class="lang-switcher">
+          <button id="lang-en" class="lang-btn active" onclick="setLang('en')">EN</button>
+          <span class="lang-divider">|</span>
+          <button id="lang-ro" class="lang-btn" onclick="setLang('ro')">RO</button>
+        </div>
       </nav>
     </div>
   </header>
@@ -33,41 +33,53 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-content">
-      <h1>Pace. Dialog. Reconciliere.</h1>
-      <p>Pacifica Romania promovează valorile păcii, dialogului constructiv și reconcilierii în societatea românească.</p>
-      <a href="#noutati" class="cta-btn">Citește noutățile</a>
-    </div>
-  </section>
-
-  <!-- DESPRE -->
-  <section id="despre" class="section">
-    <div class="container">
-      <h2>Despre noi</h2>
-      <p>
-        Pacifica Romania este o inițiativă dedicată promovării culturii păcii și dialogului în România.
-        Credem că prin comunicare deschisă, empatie și respect reciproc putem construi o societate mai
-        armonioasă. Urmărește-ne pe Facebook pentru cele mai recente activități și noutăți.
+      <h1 data-en="Peace. Dialogue. Reconciliation." data-ro="Pace. Dialog. Reconciliere.">
+        Peace. Dialogue. Reconciliation.
+      </h1>
+      <p data-en="Pacifica Romania promotes the values of peace, constructive dialogue and reconciliation in Romanian society."
+         data-ro="Pacifica Romania promovează valorile păcii, dialogului constructiv și reconcilierii în societatea românească.">
+        Pacifica Romania promotes the values of peace, constructive dialogue and reconciliation in Romanian society.
       </p>
-      <a href="https://www.facebook.com/profile.php?id=61574158391297" target="_blank" class="fb-follow-btn">
-        👍 Urmărește-ne pe Facebook
+      <a href="#news" class="cta-btn" data-en="Read the latest news" data-ro="Citește noutățile">
+        Read the latest news
       </a>
     </div>
   </section>
 
-  <!-- NOUTATI / POSTS -->
-  <section id="noutati" class="section alt">
+  <!-- ABOUT -->
+  <section id="about" class="section">
     <div class="container">
-      <h2>Noutăți de pe Facebook</h2>
-      <p class="subtitle">Cele mai recente postări ale noastre</p>
+      <h2 data-en="About Us" data-ro="Despre noi">About Us</h2>
+      <p data-en="Pacifica Romania is an initiative dedicated to promoting a culture of peace and dialogue in Romania. We believe that through open communication, empathy and mutual respect we can build a more harmonious society. Follow us on Facebook for the latest activities and news."
+         data-ro="Pacifica Romania este o inițiativă dedicată promovării culturii păcii și dialogului în România. Credem că prin comunicare deschisă, empatie și respect reciproc putem construi o societate mai armonioasă. Urmărește-ne pe Facebook pentru cele mai recente activități și noutăți.">
+        Pacifica Romania is an initiative dedicated to promoting a culture of peace and dialogue in Romania.
+        We believe that through open communication, empathy and mutual respect we can build a more harmonious
+        society. Follow us on Facebook for the latest activities and news.
+      </p>
+      <a href="https://www.facebook.com/profile.php?id=61574158391297" target="_blank" class="fb-follow-btn"
+         data-en="👍 Follow us on Facebook" data-ro="👍 Urmărește-ne pe Facebook">
+        👍 Follow us on Facebook
+      </a>
+    </div>
+  </section>
+
+  <!-- NEWS / POSTS -->
+  <section id="news" class="section alt">
+    <div class="container">
+      <h2 data-en="News from Facebook" data-ro="Noutăți de pe Facebook">News from Facebook</h2>
+      <p class="subtitle"
+         data-en="Our most recent posts"
+         data-ro="Cele mai recente postări ale noastre">
+        Our most recent posts
+      </p>
 
       <div class="posts-grid">
 
         <div class="post-card">
           <iframe
-            src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fpermalink.php%3Fstory_fbid%3Dpfbid0EnDCqUAKDsyWEDbkjBCHLL7ZZHhpZTB66GZ1RBvGPkDbsKUPZ5l%26id%3D61574158391297&show_text=true&width=500"
+            src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fpermalink.php%3Fstory_fbid%3Dpfbid0EnDCqUAKDsyWEDbkjBCHLL7ZZHhpZTB66GZ1RBvGSA7wzao6Lw6mEGPkDbsKUPZ5l%26id%3D61574158391297&show_text=true&width=500"
             width="500" height="780"
-            style="border:none;overflow:hidden"
-            scrolling="no" frameborder="0"
+            style="border:none;overflow:hidden" scrolling="no" frameborder="0"
             allowfullscreen="true"
             allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
           </iframe>
@@ -77,8 +89,7 @@
           <iframe
             src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fpermalink.php%3Fstory_fbid%3Dpfbid02ejoLAzWWNBfMsYtwvSQnBsJBv2VxWqEZ6oarUJYDW4vmx1gYzUcmFgEddcGTqijrl%26id%3D61574158391297&show_text=true&width=500"
             width="500" height="250"
-            style="border:none;overflow:hidden"
-            scrolling="no" frameborder="0"
+            style="border:none;overflow:hidden" scrolling="no" frameborder="0"
             allowfullscreen="true"
             allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
           </iframe>
@@ -88,8 +99,7 @@
           <iframe
             src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fpermalink.php%3Fstory_fbid%3Dpfbid02zyNVnrtedFbMK5u4vMhZZNiC4yShDnTeDLHUVSujVM2aYFA54GdWdwbNhCSmQ4mel%26id%3D61574158391297&show_text=true&width=500"
             width="500" height="632"
-            style="border:none;overflow:hidden"
-            scrolling="no" frameborder="0"
+            style="border:none;overflow:hidden" scrolling="no" frameborder="0"
             allowfullscreen="true"
             allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
           </iframe>
@@ -99,8 +109,7 @@
           <iframe
             src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fpermalink.php%3Fstory_fbid%3Dpfbid02euJP3PXoJBHfPUEivKQfX25SjNT8xjKvsi6mTzqUCxciydRo5t8fh8unwJoXcugFl%26id%3D61574158391297&show_text=true&width=500"
             width="500" height="780"
-            style="border:none;overflow:hidden"
-            scrolling="no" frameborder="0"
+            style="border:none;overflow:hidden" scrolling="no" frameborder="0"
             allowfullscreen="true"
             allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
           </iframe>
@@ -113,14 +122,19 @@
   <!-- CONTACT -->
   <section id="contact" class="section">
     <div class="container">
-      <h2>Contact</h2>
-      <p>Ne poți contacta prin pagina noastră de Facebook sau trimițând un mesaj direct.</p>
+      <h2 data-en="Contact" data-ro="Contact">Contact</h2>
+      <p data-en="You can reach us through our Facebook page or by sending a direct message."
+         data-ro="Ne poți contacta prin pagina noastră de Facebook sau trimițând un mesaj direct.">
+        You can reach us through our Facebook page or by sending a direct message.
+      </p>
       <div class="contact-links">
-        <a href="https://www.facebook.com/profile.php?id=61574158391297" target="_blank" class="contact-link">
-          📘 Facebook
+        <a href="https://www.facebook.com/profile.php?id=61574158391297" target="_blank" class="contact-link"
+           data-en="📘 Facebook Page" data-ro="📘 Pagina Facebook">
+          📘 Facebook Page
         </a>
-        <a href="https://www.facebook.com/messages/t/61574158391297" target="_blank" class="contact-link">
-          💬 Mesaj direct
+        <a href="https://www.facebook.com/messages/t/61574158391297" target="_blank" class="contact-link"
+           data-en="💬 Send a message" data-ro="💬 Trimite un mesaj">
+          💬 Send a message
         </a>
       </div>
     </div>
@@ -129,9 +143,39 @@
   <!-- FOOTER -->
   <footer>
     <div class="container">
-      <p>© 2025 Pacifica Romania · <a href="https://pacificaromania.space">pacificaromania.space</a></p>
+      <p>© 2025 Pacifica Romania ·
+        <a href="https://pacificaromania.space">pacificaromania.space</a>
+      </p>
     </div>
   </footer>
+
+  <script>
+    function setLang(lang) {
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll('[data-en]').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+      });
+
+      // update nav hrefs for anchor sections
+      document.querySelector('a[href="#about"], a[href="#despre"]')
+        && document.querySelectorAll('nav a.nav-link').forEach(a => {
+          const map = { about: 'about', despre: 'about', news: 'news', noutăți: 'news', contact: 'contact' };
+          // keep hrefs stable — only text changes
+        });
+
+      document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+      document.getElementById('lang-ro').classList.toggle('active', lang === 'ro');
+
+      localStorage.setItem('pr-lang', lang);
+    }
+
+    // restore saved preference
+    (function() {
+      const saved = localStorage.getItem('pr-lang');
+      if (saved && saved !== 'en') setLang(saved);
+    })();
+  </script>
 
 </body>
 </html>
