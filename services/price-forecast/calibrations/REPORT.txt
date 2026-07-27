@@ -2,59 +2,59 @@ Source: energycharts | window: 14d | threshold: 90%
 Weather: open-meteo-archive (historical, matches market window)
 
 [AT] Austria                r=+0.328 n= 358 -> anchored    [ANCHOR]
-[BE] Belgium                r=+0.180 n= 358 -> anchored    [ANCHOR]
-[BG] Bulgaria               r=+0.432 n= 357 -> anchored    [ANCHOR]
-[HR] Croatia                SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=HR&start=2026-07-06&end=2026-07-20'
+[BE] Belgium                r=+0.059 n= 358 -> anchored    [ANCHOR]
+[BG] Bulgaria               r=+0.471 n= 357 -> anchored    [ANCHOR]
+[HR] Croatia                SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=HR&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
 [CY] Cyprus                 SKIPPED — market fetch failed: zone CY has no Energy-Charts mapping; use --source entsoe
-[CZ] Czechia                r=+0.265 n= 358 -> anchored    [ANCHOR]
-[DK1] Denmark West           SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=DK1&start=2026-07-06&end=2026-07-20'
+[CZ] Czechia                r=+0.304 n= 358 -> anchored    [ANCHOR]
+[DK1] Denmark West           SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=DK1&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[DK2] Denmark East           SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=DK2&start=2026-07-06&end=2026-07-20'
+[DK2] Denmark East           SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=DK2&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[EE] Estonia                SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=EE&start=2026-07-06&end=2026-07-20'
+[EE] Estonia                SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=EE&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[FI] Finland                SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=FI&start=2026-07-06&end=2026-07-20'
+[FI] Finland                SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=FI&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[FR] France                 SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=FR&start=2026-07-06&end=2026-07-20'
+[FR] France                 SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=FR&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[DE_LU] Germany-Luxembourg     SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=DE-LU&start=2026-07-06&end=2026-07-20'
+[DE_LU] Germany-Luxembourg     SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=DE-LU&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[GR] Greece                 SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=GR&start=2026-07-06&end=2026-07-20'
+[GR] Greece                 SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=GR&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[HU] Hungary                SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=HU&start=2026-07-06&end=2026-07-20'
+[HU] Hungary                SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=HU&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[IE] Ireland (SEM)          SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=IE&start=2026-07-06&end=2026-07-20'
+[IE] Ireland (SEM)          SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=IE&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[IT_NORD] Italy North            SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=IT-North&start=2026-07-06&end=2026-07-20'
+[IT_NORD] Italy North            SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=IT-North&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[IT_CNOR] Italy Centre-North     SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=IT-Centre-North&start=2026-07-06&end=2026-07-20'
+[IT_CNOR] Italy Centre-North     SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=IT-Centre-North&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[IT_SUD] Italy South            SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=IT-South&start=2026-07-06&end=2026-07-20'
+[IT_SUD] Italy South            SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=IT-South&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[LV] Latvia                 SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=LV&start=2026-07-06&end=2026-07-20'
+[LV] Latvia                 SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=LV&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[LT] Lithuania              SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=LT&start=2026-07-06&end=2026-07-20'
+[LT] Lithuania              SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=LT&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
 [MT] Malta                  SKIPPED — market fetch failed: zone MT has no Energy-Charts mapping; use --source entsoe
-[NL] Netherlands            SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=NL&start=2026-07-06&end=2026-07-20'
+[NL] Netherlands            SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=NL&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[PL] Poland                 SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=PL&start=2026-07-06&end=2026-07-20'
+[PL] Poland                 SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=PL&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[PT] Portugal               SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=PT&start=2026-07-06&end=2026-07-20'
+[PT] Portugal               SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=PT&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[RO] Romania                SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=RO&start=2026-07-06&end=2026-07-20'
+[RO] Romania                SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=RO&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[SK] Slovakia               SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=SK&start=2026-07-06&end=2026-07-20'
+[SK] Slovakia               SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=SK&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[SI] Slovenia               SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=SI&start=2026-07-06&end=2026-07-20'
+[SI] Slovenia               SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=SI&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[ES] Spain                  SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=ES&start=2026-07-06&end=2026-07-20'
+[ES] Spain                  SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=ES&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[SE3] Sweden SE3             SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=SE3&start=2026-07-06&end=2026-07-20'
+[SE3] Sweden SE3             SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=SE3&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-[SE4] Sweden SE4             SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=SE4&start=2026-07-06&end=2026-07-20'
+[SE4] Sweden SE4             SKIPPED — market fetch failed: Client error '429 Too Many Requests' for url 'https://api.energy-charts.info/price?bzn=SE4&start=2026-07-13&end=2026-07-27'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
 
-Summary: 4 zones calibrated, mean r=+0.301, 4 below 90% -> anchored to market price.
+Summary: 4 zones calibrated, mean r=+0.290, 4 below 90% -> anchored to market price.
 Skipped: 26 zone(s) — HR, CY, DK1, DK2, EE, FI, FR, DE_LU, GR, HU, IE, IT_NORD, IT_CNOR, IT_SUD, LV, LT, MT, NL, PL, PT, RO, SK, SI, ES, SE3, SE4
