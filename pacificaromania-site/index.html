@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Pacifica Romania – Promoting peace, dialogue and reconciliation in Romania." />
+  <title>Pacifica Romania</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🕊️</span>
+        <span class="logo-text">Pacifica Romania</span>
+      </div>
+      <nav>
+        <a href="#about"    class="nav-link" data-en="About"     data-ro="Despre">About</a>
+        <a href="#news"     class="nav-link" data-en="News"      data-ro="Noutăți">News</a>
+        <a href="#contact"  class="nav-link" data-en="Contact"   data-ro="Contact">Contact</a>
+        <a href="https://www.facebook.com/profile.php?id=61574158391297" target="_blank" class="btn-fb">Facebook</a>
+        <div class="lang-switcher">
+          <button id="lang-en" class="lang-btn active" onclick="setLang('en')">EN</button>
+          <span class="lang-divider">|</span>
+          <button id="lang-ro" class="lang-btn" onclick="setLang('ro')">RO</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 data-en="Peace. Dialogue. Reconciliation." data-ro="Pace. Dialog. Reconciliere.">
+        Peace. Dialogue. Reconciliation.
+      </h1>
+      <p data-en="Pacifica Romania promotes the values of peace, constructive dialogue and reconciliation in Romanian society."
+         data-ro="Pacifica Romania promovează valorile păcii, dialogului constructiv și reconcilierii în societatea românească.">
+        Pacifica Romania promotes the values of peace, constructive dialogue and reconciliation in Romanian society.
+      </p>
+      <a href="#news" class="cta-btn" data-en="Read the latest news" data-ro="Citește noutățile">
+        Read the latest news
+      </a>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="section">
+    <div class="container">
+      <h2 data-en="About Us" data-ro="Despre noi">About Us</h2>
+      <p data-en="Pacifica Romania is an initiative dedicated to promoting a culture of peace and dialogue in Romania. We believe that through open communication, empathy and mutual respect we can build a more harmonious society. Follow us on Facebook for the latest activities and news."
+         data-ro="Pacifica Romania este o inițiativă dedicată promovării culturii păcii și dialogului în România. Credem că prin comunicare deschisă, empatie și respect reciproc putem construi o societate mai armonioasă. Urmărește-ne pe Facebook pentru cele mai recente activități și noutăți.">
+        Pacifica Romania is an initiative dedicated to promoting a culture of peace and dialogue in Romania.
+        We believe that through open communication, empathy and mutual respect we can build a more harmonious
+        society. Follow us on Facebook for the latest activities and news.
+      </p>
+      <a href="https://www.facebook.com/profile.php?id=61574158391297" target="_blank" class="fb-follow-btn"
+         data-en="👍 Follow us on Facebook" data-ro="👍 Urmărește-ne pe Facebook">
+        👍 Follow us on Facebook
+      </a>
+    </div>
+  </section>
+
+  <!-- NEWS / POSTS -->
+  <section id="news" class="section alt">
+    <div class="container">
+      <h2 data-en="News from Facebook" data-ro="Noutăți de pe Facebook">News from Facebook</h2>
+      <p class="subtitle"
+         data-en="Our most recent posts"
+         data-ro="Cele mai recente postări ale noastre">
+        Our most recent posts
+      </p>
+
+      <div class="posts-grid">
+        <!-- POSTS:START -->
+        <p class="no-posts" data-en="Posts will appear here after the first sync." data-ro="Postările vor apărea după prima sincronizare.">Posts will appear here after the first sync.</p>
+        <!-- POSTS:END -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section">
+    <div class="container">
+      <h2 data-en="Contact" data-ro="Contact">Contact</h2>
+      <p data-en="You can reach us through our Facebook page or by sending a direct message."
+         data-ro="Ne poți contacta prin pagina noastră de Facebook sau trimițând un mesaj direct.">
+        You can reach us through our Facebook page or by sending a direct message.
+      </p>
+      <div class="contact-links">
+        <a href="https://www.facebook.com/profile.php?id=61574158391297" target="_blank" class="contact-link"
+           data-en="📘 Facebook Page" data-ro="📘 Pagina Facebook">
+          📘 Facebook Page
+        </a>
+        <a href="https://www.facebook.com/messages/t/61574158391297" target="_blank" class="contact-link"
+           data-en="💬 Send a message" data-ro="💬 Trimite un mesaj">
+          💬 Send a message
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>© 2025 Pacifica Romania ·
+        <a href="https://pacificaromania.space">pacificaromania.space</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    function setLang(lang) {
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll('[data-en]').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+      });
+
+      // update nav hrefs for anchor sections
+      document.querySelector('a[href="#about"], a[href="#despre"]')
+        && document.querySelectorAll('nav a.nav-link').forEach(a => {
+          const map = { about: 'about', despre: 'about', news: 'news', noutăți: 'news', contact: 'contact' };
+          // keep hrefs stable — only text changes
+        });
+
+      document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+      document.getElementById('lang-ro').classList.toggle('active', lang === 'ro');
+
+      localStorage.setItem('pr-lang', lang);
+    }
+
+    // restore saved preference
+    (function() {
+      const saved = localStorage.getItem('pr-lang');
+      if (saved && saved !== 'en') setLang(saved);
+    })();
+  </script>
+
+</body>
+</html>
