@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ro">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Demo live — EcoVPP</title><meta name="description" content="Previzualizare live în browser a panoului locatarului EcoVPP." />
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" /><link rel="stylesheet" href="../assets/style.css" />
+<style>
+.demo-panel { background: linear-gradient(180deg, rgba(28,39,72,.7), rgba(21,31,55,.7)); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem 1.6rem; }
+.demo-panel h3 { margin: 0 0 .25rem; } .demo-panel p.sub { color: var(--muted); margin: 0 0 1rem; }
+.big-num { font-size: 2.6rem; font-weight: 800; letter-spacing: -.02em; background: linear-gradient(135deg, #5eead4, #fbbf24); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.big-num small { font-size: 1rem; font-weight: 500; color: var(--muted); }
+.chart { display: flex; align-items: flex-end; gap: 4px; height: 140px; padding: .8rem; border: 1px solid var(--border); border-radius: 12px; background: rgba(0,0,0,.25); margin-top: 1rem; }
+.chart .b { flex: 1; min-height: 4px; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, #fbbf24, #d97706); opacity: .9; }
+.split { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.split .mini { padding: 1rem 1.1rem; border: 1px solid var(--border); border-radius: 12px; background: rgba(0,0,0,.2); }
+.split .mini .lbl { color: var(--muted); font-size: .82rem; } .split .mini .val { font-size: 1.3rem; font-weight: 700; margin-top: .2rem; }
+.badge-live { display: inline-block; font-size: .72rem; padding: .18rem .55rem; border-radius: 999px; border: 1px solid #1f6e4a; background: rgba(52,211,153,.1); color: #34d399; }
+</style></head><body>
+<header id="site-header" class="site-header"></header>
+<main class="wrap">
+<section class="hero left">
+  <div class="eyebrow">Previzualizare live</div>
+  <h1>Asta văd <span class="grad">locatarii</span>.</h1>
+  <p class="lead">O vedere lunară prietenoasă. Fără jargon, fără scheme electrice — doar cât solar ai primit și cât ai economisit.</p>
+</section>
+
+<section><div class="row">
+<div><div class="demo-panel">
+  <h3>Partea ta de solar <span class="badge-live">previzualizare live</span></h3>
+  <p class="sub">Luna aceasta · Apartamentul 3B</p>
+  <div class="big-num" id="solar-kwh">— <small>kWh primiți gratuit</small></div>
+  <div class="split">
+    <div class="mini"><div class="lbl">Reducere factură</div><div class="val" id="bill">— €</div></div>
+    <div class="mini"><div class="lbl">CO₂ evitat</div><div class="val" id="co2">— kg</div></div>
+    <div class="mini"><div class="lbl">Cotă acoperiș</div><div class="val" id="share">— %</div></div>
+    <div class="mini"><div class="lbl">Ore însorite azi</div><div class="val" id="sun-hours">— h</div></div>
+  </div>
+  <div class="chart" id="chart" aria-label="Solar împărțit cu apartamentul tău, ultimele 30 de zile"></div>
+  <p class="sub" style="margin-top:.8rem">Ultimele 30 de zile · solar zilnic împărțit cu apartamentul tău</p>
+</div></div>
+<div><div class="demo-panel">
+  <h3>Ce se întâmplă chiar acum</h3>
+  <p class="sub" id="rn-sub">Feed simulat — se actualizează la câteva secunde</p>
+  <div id="feed" style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85rem; color: var(--muted); line-height: 1.7; max-height: 260px; overflow: hidden;"></div>
+</div>
+<div class="demo-panel" style="margin-top:1rem">
+  <h3>Ce este asta</h3>
+  <p class="sub">Pagina e o previzualizare. Folosește date simulate ca să explorezi aspectul și cifrele fără să te conectezi la o clădire reală. Contactează-ne și îți conectăm una reală.</p>
+  <a class="btn" href="contact.html" style="margin-top: .8rem">Discutăm →</a>
+</div></div>
+</div></section>
+</main>
+<footer id="site-footer" class="site-footer"></footer>
+<script src="../assets/app.js"></script>
+<script>
+(function(){const $=id=>document.getElementById(id);const rand=(a,b)=>Math.random()*(b-a)+a;
+const s=Math.round(rand(140,220));$('solar-kwh').innerHTML=`${s} <small>kWh primiți gratuit</small>`;
+$('bill').textContent=`€${(s*0.22).toFixed(1)}`;$('co2').textContent=`${Math.round(s*0.34)} kg`;
+$('share').textContent=`${(5+Math.random()*4).toFixed(1)} %`;$('sun-hours').textContent=`${rand(4,7).toFixed(1)} h`;
+const c=$('chart');for(let i=0;i<30;i++){const v=25+Math.random()*70+(i%7===0?-15:0);const b=document.createElement('div');b.className='b';b.style.height=v+'%';b.title=`Ziua ${i+1}: ${(v*0.12).toFixed(1)} kWh`;c.appendChild(b);}
+const f=$('feed');const ev=['Acoperișul produce 6,2 kW — suficient pentru 4 apartamente','Credit solar adăugat apartamentului 3B: 0,34 kWh','Nori mai mulți — producția a scăzut la 4,1 kW','Bateria s-a încărcat la 82% pentru seară','Stația EV se aliniază cu excedentul solar din garaj','Credit solar adăugat apartamentului 7A: 0,51 kWh','Economie totală astăzi: €12,40','Prognoză ore însorite pentru mâine: 6,5'];let i=0;
+function push(){const t=new Date().toTimeString().slice(0,5);const d=document.createElement('div');d.textContent=`[${t}] ${ev[i%ev.length]}`;i++;f.insertBefore(d,f.firstChild);while(f.children.length>10)f.removeChild(f.lastChild);}
+push();setInterval(push,4000);})();
+</script>
+</body></html>
