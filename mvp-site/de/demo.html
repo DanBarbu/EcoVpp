@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Live-Demo — EcoVPP</title>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" /><link rel="stylesheet" href="../assets/style.css" />
+<style>.demo-panel{background:linear-gradient(180deg,rgba(28,39,72,.7),rgba(21,31,55,.7));border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 1.6rem}.demo-panel h3{margin:0 0 .25rem}.demo-panel p.sub{color:var(--muted);margin:0 0 1rem}.big-num{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,#5eead4,#fbbf24);-webkit-background-clip:text;background-clip:text;color:transparent}.big-num small{font-size:1rem;font-weight:500;color:var(--muted)}.chart{display:flex;align-items:flex-end;gap:4px;height:140px;padding:.8rem;border:1px solid var(--border);border-radius:12px;background:rgba(0,0,0,.25);margin-top:1rem}.chart .b{flex:1;min-height:4px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,#fbbf24,#d97706);opacity:.9}.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-top:1rem}.split .mini{padding:1rem 1.1rem;border:1px solid var(--border);border-radius:12px;background:rgba(0,0,0,.2)}.split .mini .lbl{color:var(--muted);font-size:.82rem}.split .mini .val{font-size:1.3rem;font-weight:700;margin-top:.2rem}.badge-live{display:inline-block;font-size:.72rem;padding:.18rem .55rem;border-radius:999px;border:1px solid #1f6e4a;background:rgba(52,211,153,.1);color:#34d399}</style></head><body>
+<header id="site-header" class="site-header"></header>
+<main class="wrap">
+<section class="hero left"><div class="eyebrow">Live-Vorschau</div>
+<h1>Das sehen <span class="grad">Bewohner</span>.</h1>
+<p class="lead">Eine freundliche Monatsansicht. Kein Fachchinesisch, keine Schaltpläne — nur wie viel Sonnenstrom Sie erhalten und wie viel Sie gespart haben.</p></section>
+
+<section><div class="row">
+<div><div class="demo-panel">
+  <h3>Ihr Solaranteil <span class="badge-live">Live-Vorschau</span></h3>
+  <p class="sub">Dieser Monat · Wohnung 3B</p>
+  <div class="big-num" id="solar-kwh">— <small>kWh kostenlos erhalten</small></div>
+  <div class="split">
+    <div class="mini"><div class="lbl">Rechnungs­rabatt</div><div class="val" id="bill">— €</div></div>
+    <div class="mini"><div class="lbl">Vermiedenes CO₂</div><div class="val" id="co2">— kg</div></div>
+    <div class="mini"><div class="lbl">Dachanteil</div><div class="val" id="share">— %</div></div>
+    <div class="mini"><div class="lbl">Sonnenstunden heute</div><div class="val" id="sun-hours">— h</div></div>
+  </div>
+  <div class="chart" id="chart" aria-label="Mit Ihrer Wohnung geteilter Solarstrom, letzte 30 Tage"></div>
+  <p class="sub" style="margin-top:.8rem">Letzte 30 Tage · täglicher Solaranteil Ihrer Wohnung</p>
+</div></div>
+<div><div class="demo-panel">
+  <h3>Was gerade passiert</h3>
+  <p class="sub">Simulierter Feed — Aktualisierung alle paar Sekunden</p>
+  <div id="feed" style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85rem; color: var(--muted); line-height: 1.7; max-height: 260px; overflow: hidden;"></div>
+</div>
+<div class="demo-panel" style="margin-top:1rem"><h3>Was das ist</h3>
+<p class="sub">Diese Seite ist eine Vorschau. Sie nutzt simulierte Daten, damit Sie Layout und Zahlen erkunden können, ohne mit einem echten Gebäude verbunden zu sein. Nehmen Sie Kontakt auf und wir binden ein reales an.</p>
+<a class="btn" href="contact.html" style="margin-top: .8rem">Sprechen wir →</a></div></div>
+</div></section>
+
+</main>
+<footer id="site-footer" class="site-footer"></footer>
+<script src="../assets/app.js"></script>
+<script>
+(function(){const $=id=>document.getElementById(id);const rand=(a,b)=>Math.random()*(b-a)+a;
+const s=Math.round(rand(140,220));$('solar-kwh').innerHTML=`${s} <small>kWh kostenlos erhalten</small>`;
+$('bill').textContent=`€${(s*0.22).toFixed(1)}`;$('co2').textContent=`${Math.round(s*0.34)} kg`;
+$('share').textContent=`${(5+Math.random()*4).toFixed(1)} %`;$('sun-hours').textContent=`${rand(4,7).toFixed(1)} h`;
+const c=$('chart');for(let i=0;i<30;i++){const v=25+Math.random()*70+(i%7===0?-15:0);const b=document.createElement('div');b.className='b';b.style.height=v+'%';b.title=`Tag ${i+1}: ${(v*0.12).toFixed(1)} kWh`;c.appendChild(b);}
+const f=$('feed');const ev=['Dach erzeugt 6,2 kW — genug für 4 Wohnungen','Solargutschrift Wohnung 3B: 0,34 kWh','Bewölkung nimmt zu — Produktion sinkt auf 4,1 kW','Batterie auf 82 % geladen für den Abend','Wallbox koppelt sich mit Solarüberschuss','Solargutschrift Wohnung 7A: 0,51 kWh','Einsparung des Gebäudes heute: 12,40 €','Sonnenstunden-Prognose morgen: 6,5'];let i=0;
+function push(){const t=new Date().toTimeString().slice(0,5);const d=document.createElement('div');d.textContent=`[${t}] ${ev[i%ev.length]}`;i++;f.insertBefore(d,f.firstChild);while(f.children.length>10)f.removeChild(f.lastChild);}
+push();setInterval(push,4000);})();
+</script>
+</body></html>

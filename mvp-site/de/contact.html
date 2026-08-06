@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kontakt — EcoVPP</title>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" /><link rel="stylesheet" href="../assets/style.css" /></head><body>
+<header id="site-header" class="site-header"></header>
+<main class="wrap">
+
+<section class="hero left"><h1>Sprechen wir <span class="grad">miteinander</span>.</h1>
+<p class="lead">Hausverwaltung, Bewohner oder Partnerinstallateur — melden Sie sich, wir antworten binnen zwei Werktagen.</p></section>
+
+<section class="row">
+<div class="demo-panel card"><h3>Nachricht senden</h3>
+<form id="contact-form" novalidate style="margin-top:1rem">
+  <div class="field"><label for="name">Name</label><input class="input" id="name" name="name" required autocomplete="name" /></div>
+  <div class="field"><label for="email">E-Mail</label><input class="input" id="email" name="email" type="email" required autocomplete="email" /></div>
+  <div class="field"><label for="role">Sie sind…</label>
+    <select class="select" id="role" name="role"><option>Bewohner</option><option>Hausverwaltung</option><option>WEG-Mitglied</option><option>Installateur / Partner</option><option>Sonstiges</option></select></div>
+  <div class="field"><label for="units">Wie viele Wohnungen hat Ihr Gebäude (ca.)?</label><input class="input" id="units" name="units" type="number" min="1" /></div>
+  <div class="field"><label for="message">Nachricht</label><textarea class="textarea" id="message" name="message" rows="5"></textarea></div>
+  <button class="btn" type="submit">Senden →</button>
+</form><div id="contact-result"></div></div>
+<div><div class="card"><h3>Was als Nächstes passiert</h3>
+<p style="color:var(--muted); line-height:1.65; font-size:.95rem; margin-top:.6rem">Antwort binnen zwei Werktagen mit einer Ersteinschätzung: Solarpotenzial des Dachs, mögliche Einsparung und wie der erste Projektmonat aussieht.</p></div>
+<div class="card" style="margin-top:1rem"><h3>Lieber nur die Demo?</h3>
+<p style="color:var(--muted); line-height:1.65; font-size:.95rem; margin-top:.6rem">Die interaktive Vorschau zeigt das Bewohner-Dashboard ohne Anmeldung.</p>
+<a class="btn alt" href="demo.html" style="margin-top:.6rem">Demo öffnen →</a></div></div>
+</section>
+
+</main>
+<footer id="site-footer" class="site-footer"></footer>
+<script src="../assets/app.js"></script>
+</body></html>

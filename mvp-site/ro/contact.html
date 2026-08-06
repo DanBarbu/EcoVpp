@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ro">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Contact — EcoVPP</title>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" /><link rel="stylesheet" href="../assets/style.css" /></head><body>
+<header id="site-header" class="site-header"></header>
+<main class="wrap">
+
+<section class="hero left">
+  <h1>Hai să <span class="grad">vorbim</span>.</h1>
+  <p class="lead">Administrator, locatar sau instalator partener — contactează-ne și îți răspundem în două zile lucrătoare.</p>
+</section>
+
+<section class="row">
+  <div class="demo-panel card">
+    <h3>Trimite un mesaj</h3>
+    <form id="contact-form" novalidate style="margin-top:1rem">
+      <div class="field"><label for="name">Nume</label><input class="input" id="name" name="name" required autocomplete="name" /></div>
+      <div class="field"><label for="email">Email</label><input class="input" id="email" name="email" type="email" required autocomplete="email" /></div>
+      <div class="field"><label for="role">Ești…</label>
+        <select class="select" id="role" name="role">
+          <option>Locatar</option><option>Administrator</option><option>Membru al asociației de proprietari</option>
+          <option>Instalator / partener</option><option>Altceva</option>
+        </select></div>
+      <div class="field"><label for="units">Câte apartamente are blocul tău (aproximativ)?</label><input class="input" id="units" name="units" type="number" min="1" /></div>
+      <div class="field"><label for="message">Mesaj</label><textarea class="textarea" id="message" name="message" rows="5"></textarea></div>
+      <button class="btn" type="submit">Trimite →</button>
+    </form>
+    <div id="contact-result"></div>
+  </div>
+  <div>
+    <div class="card"><h3>Ce urmează</h3>
+    <p style="color:var(--muted); line-height:1.65; font-size:.95rem; margin-top:.6rem">Vei primi un răspuns în două zile lucrătoare cu o estimare inițială: cât solar ar încăpea pe acoperișul tău, cât ar economisi blocul și cum arată prima lună.</p></div>
+    <div class="card" style="margin-top:1rem"><h3>Preferi doar să încerci demo-ul?</h3>
+    <p style="color:var(--muted); line-height:1.65; font-size:.95rem; margin-top:.6rem">Previzualizarea interactivă îți permite să explorezi panoul locatarului fără înscriere.</p>
+    <a class="btn alt" href="demo.html" style="margin-top:.6rem">Deschide demo-ul →</a></div>
+  </div>
+</section>
+
+</main>
+<footer id="site-footer" class="site-footer"></footer>
+<script src="../assets/app.js"></script>
+</body></html>
