@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact — EcoVPP</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap">
+
+  <section class="hero left">
+    <h1>Let's <span class="grad">talk</span>.</h1>
+    <p class="lead">Building manager, resident, or partner installer — get in touch and we'll reply within two working days.</p>
+  </section>
+
+  <section class="row">
+    <div class="demo-panel card">
+      <h3>Send a message</h3>
+      <form id="contact-form" novalidate style="margin-top:1rem">
+        <div class="field"><label for="name">Name</label><input class="input" id="name" name="name" required autocomplete="name" /></div>
+        <div class="field"><label for="email">Email</label><input class="input" id="email" name="email" type="email" required autocomplete="email" /></div>
+        <div class="field"><label for="role">You are a…</label>
+          <select class="select" id="role" name="role">
+            <option>Building resident</option>
+            <option>Building manager</option>
+            <option>Cooperative board member</option>
+            <option>Installer / partner</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="field"><label for="units">How many apartments in your building (approx.)?</label><input class="input" id="units" name="units" type="number" min="1" /></div>
+        <div class="field"><label for="message">Message</label><textarea class="textarea" id="message" name="message" rows="5"></textarea></div>
+        <button class="btn" type="submit">Send →</button>
+      </form>
+      <div id="contact-result"></div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>What happens next</h3>
+        <p style="color:var(--muted); line-height:1.65; font-size:.95rem; margin-top:.6rem">You'll hear back within two working days with a first estimate: roughly how much solar your roof could hold, how much the building could save, and what the first month of the project looks like.</p>
+      </div>
+      <div class="card" style="margin-top:1rem">
+        <h3>Prefer to just try the demo?</h3>
+        <p style="color:var(--muted); line-height:1.65; font-size:.95rem; margin-top:.6rem">The interactive preview lets you explore the resident dashboard without signing up.</p>
+        <a class="btn alt" href="demo.html" style="margin-top:.6rem">Open the demo →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/app.js"></script>
+</body>
+</html>
