@@ -54,4 +54,4 @@ Allow: /
 User-agent: YouBot
 Allow: /
 
-Sitemap: https://ecovpp.eu/sitemap.xml
+Sitemap: https://pacificaromania.space/sitemap.xml

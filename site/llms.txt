@@ -1,0 +1,14 @@
+# ECO-VPP — Energy Community Virtual Power Plant
+
+> ECO-VPP turns multi-unit residential buildings into a Virtual Power Plant using RED II Collective Self-Consumption, a GSY-e peer-to-peer energy market, and Energy Web settlement on a sub-€20 ESP32 node. A Horizon Europe project with pilots across Romania, Italy, Spain, Switzerland, and Moldova.
+
+## Pages
+
+- [About — ECO-VPP](https://ecovpp.eu/about.html): The ECO-VPP project, its team, the Horizon Europe context, and the technology choices behind a sub-€20 Virtual Power Plant.
+- [Contact — ECO-VPP](https://ecovpp.eu/contact.html): Get in touch with the ECO-VPP project team.
+- [Live demo — ECO-VPP](https://ecovpp.eu/demo.html): Interactive ECO-VPP dashboard demo. Mocked data — wire to the real webhook-receiver via fetch().
+- [Features — ECO-VPP](https://ecovpp.eu/features.html): Every component of the ECO-VPP platform: ingest, RED II sharing, VPP dispatch, settlement, forecasting, dashboard.
+- [Price forecast — ECO-VPP](https://ecovpp.eu/forecast.html): Weather-driven 10-minute electricity price forecast. The <price-forecast> UI module, powered by Open-Meteo + the METOC Lagrangian nowcast.
+- [ECO-VPP — Energy Community Virtual Power Plant](https://ecovpp.eu/): ECO-VPP turns multi-unit residential buildings into a Virtual Power Plant. RED II Collective Self-Consumption, GSY-e P2P market, Energy Web settlement on a sub-€20 ESP32 node.
+- [Pilot sites — ECO-VPP](https://ecovpp.eu/pilots.html): ECO-VPP pilot deployments across Romania, Italy, Spain, Switzerland, and Moldova.
+

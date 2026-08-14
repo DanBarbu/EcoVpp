@@ -1,0 +1,18 @@
+# analogreader.online
+
+> analogreader.online digitises analog power, gas, and water meters: photograph a meter and get a digital reading, monthly consumption charts, and bill estimates. OCR pipeline, multi-meter dashboards, alerts, exports, and an API.
+
+## Pages
+
+- [API — analogreader.online](https://analogreader.online/api.html): API — analogreader.online
+- [The app — analogreader.online](https://analogreader.online/app.html): The live analogreader UI module — capture a meter, get a digital reading, track history. Works offline in mock mode.
+- [Contact — analogreader.online](https://analogreader.online/contact.html): Contact — analogreader.online
+- [Live demo — analogreader.online](https://analogreader.online/demo.html): Drop a meter photo and watch it become a digital reading. No signup needed.
+- [FAQ — analogreader.online](https://analogreader.online/faq.html): Common questions about analogreader: accuracy, privacy, integrations, and pricing.
+- [Features — analogreader.online](https://analogreader.online/features.html): Every feature in analogreader.online: OCR, multi-meter dashboards, alerts, exports, API, and more.
+- [How it works — analogreader.online](https://analogreader.online/how-it-works.html): From meter snapshot to digital log in under five seconds. Inside the analogreader OCR pipeline.
+- [analogreader.online — Digitise your power, gas, and water meters](https://analogreader.online/): Take a photo of your analog meter. Get a digital reading, monthly consumption charts, and bill estimates — for electricity, gas, and water.
+- [Pricing — analogreader.online](https://analogreader.online/pricing.html): Free for personal use. Pro and team plans for households, building managers, and utilities.
+- [Privacy — analogreader.online](https://analogreader.online/privacy.html): Privacy — analogreader.online
+- [Terms — analogreader.online](https://analogreader.online/terms.html): Terms — analogreader.online
+
